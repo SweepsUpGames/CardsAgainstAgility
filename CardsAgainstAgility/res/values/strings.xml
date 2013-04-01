@@ -4,5 +4,6 @@
     <string name="app_name">CardsAgainstAgility</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="new_game">&quot;Create a new game.&quot;</string>
 
 </resources>
