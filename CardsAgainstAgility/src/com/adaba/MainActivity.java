@@ -1,15 +1,40 @@
 package com.adaba;
 
-import android.os.Bundle;
+import java.io.IOException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends Activity {
+	static final String host = "http://localhost:8080/ServerAgainstAgility/DefaultServlet";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		Button button = (Button)findViewById(R.id.createGameButton);
+		button.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				// TODO this is a test - very bad form.
+				try {
+					HttpClient httpclient = new DefaultHttpClient();
+					HttpGet httpGet = new HttpGet(host);
+					HttpResponse response = httpclient.execute(httpGet);
+				} catch (ClientProtocolException e) { e.printStackTrace(); } 
+				catch (IOException e) { e.printStackTrace(); }
+			}
+		});
 	}
 
 	@Override
