@@ -6,5 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="new_game">Create a new game.</string>
     <color name="DK_GREY">#41383C</color>
+    <string name="game_room">Select a game room.</string>
 
 </resources>
