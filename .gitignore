@@ -3,3 +3,4 @@
 *.apk
 *R.java
 *CardsAgainstAgility/bin/*
+*CardsAgainstAgility/gen/*
