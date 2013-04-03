@@ -7,15 +7,17 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
-	static final String host = "http://localhost:8080/ServerAgainstAgility/DefaultServlet";
+	static final String host = "http://10.0.2.2:8080/ServerAgainstAgility/DefaultServlet";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public class MainActivity extends Activity {
 					HttpClient httpclient = new DefaultHttpClient();
 					HttpGet httpGet = new HttpGet(host);
 					HttpResponse response = httpclient.execute(httpGet);
+					System.out.println(EntityUtils.toString(response.getEntity()));
 				} catch (ClientProtocolException e) { e.printStackTrace(); } 
 				catch (IOException e) { e.printStackTrace(); }
 			}
