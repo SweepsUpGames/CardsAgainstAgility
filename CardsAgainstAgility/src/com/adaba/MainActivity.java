@@ -12,6 +12,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -40,6 +41,7 @@ public class MainActivity extends Activity {
 		ArrayAdapter<String> adapt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, listOfGames);
 		gameList.setAdapter(adapt);
 
+		/*
 		Button button = (Button)findViewById(R.id.createGameButton);
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -53,8 +55,28 @@ public class MainActivity extends Activity {
 				} catch (ClientProtocolException e) { e.printStackTrace(); } 
 				catch (IOException e) { e.printStackTrace(); }
 			}
+		});*/
+		
+		
+		Button gameButton = (Button) findViewById(R.id.button1);
+		gameButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				createGame();
+				
+			}
 		});
 	}
+	
+
+
+
+private void createGame(){
+	Intent intent = new Intent(this, PlayerViewActivity.class);
+	startActivity(intent);
+}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
