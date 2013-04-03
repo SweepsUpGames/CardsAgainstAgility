@@ -11,7 +11,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import android.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -27,7 +26,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		List<String> listOfGames = new LinkedList<String>();
 		listOfGames.add("first");
 		listOfGames.add("second");
@@ -36,7 +35,7 @@ public class MainActivity extends Activity {
 		listOfGames.add("fifth");
 		listOfGames.add("sixth");
 		listOfGames.add("seventh");
-		
+
 		ListView gameList = (ListView) findViewById(R.id.gameRoomList);
 		ArrayAdapter<String> adapt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, listOfGames);
 		gameList.setAdapter(adapt);
