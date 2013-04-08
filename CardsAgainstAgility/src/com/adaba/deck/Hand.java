@@ -20,6 +20,10 @@ public class Hand {
 	public String toString(){
 		return hand.toString();
 	}
+
+	public Card getCard(int card) {
+		return hand.get(card);
+	}
 	
 	
 	
