@@ -1,4 +1,4 @@
-package com.adaba;
+package com.adaba.activities;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -11,8 +11,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import com.adaba.R;
+
 import android.app.Activity;
-import android.net.Uri;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,25 +31,13 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		List<String> listOfGames = new LinkedList<String>();
-		try {
-			Uri.Builder builder = Uri.parse(host).buildUpon();
-			builder.appendPath("/DefaultServlet")
-			.appendQueryParameter("req", "gamelist");
-			Uri uri = builder.build();
-
-			HttpClient httpclient = new DefaultHttpClient();
-			System.out.println(uri.toString());
-			HttpGet httpGet = new HttpGet(uri.toString());
-			HttpResponse response = httpclient.execute(httpGet);
-			String games = EntityUtils.toString(response.getEntity());
-			System.out.println(games);
-			if (games != null) 
-				for (String game : games.split("\n")) { 
-					System.out.println(game);
-					listOfGames.add(game);
-				}
-		} catch (ClientProtocolException e) { e.printStackTrace(); } 
-		catch (IOException e) { e.printStackTrace(); }
+		listOfGames.add("first");
+		listOfGames.add("second");
+		listOfGames.add("third");
+		listOfGames.add("forth");
+		listOfGames.add("fifth");
+		listOfGames.add("sixth");
+		listOfGames.add("seventh");
 
 		ListView gameList = (ListView) findViewById(R.id.gameRoomList);
 		ArrayAdapter<String> adapt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, listOfGames);
@@ -71,7 +60,7 @@ public class MainActivity extends Activity {
 		});*/
 		
 		
-		Button gameButton = (Button) findViewById(R.id.button1);
+		Button gameButton = (Button) findViewById(R.id.createGameButton);
 		gameButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
