@@ -10,6 +10,6 @@ public class BlackCard implements Card {
 	}
 
 	
-	public String toString(){ return String.format("%s: %s", this.text); }
+	public String getText(){ return String.format("%s: %s", this.text); }
 	public int getBlanks() { return blanks; }
 }
