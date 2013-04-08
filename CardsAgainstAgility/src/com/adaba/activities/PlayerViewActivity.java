@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.adaba.R;
-import com.adaba.cards.Card;
-import com.adaba.cards.Type;
-import com.adaba.deck.DeckCreator;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.adaba.R;
+import com.adaba.cards.Card;
+import com.adaba.cards.Card.Type;
+import com.adaba.deck.DeckCreator;
 
 public class PlayerViewActivity extends Activity {
 	
