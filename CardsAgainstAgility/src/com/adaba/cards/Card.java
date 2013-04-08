@@ -9,5 +9,10 @@ public class Card {
 		this.type = type;
 	}
 
+	public String getText() { return this.text; }
+	public Type getType() { return this.type; }
+
 	public String toString() { return String.format("%s: %s", this.type, this.text); }
+
+	public enum Type { BLACK, WHITE }
 }
