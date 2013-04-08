@@ -7,7 +7,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.adaba.cards.*;
+import com.adaba.cards.Card;
+import com.adaba.cards.Card.Type;
 
 public class DeckCreator {
 
