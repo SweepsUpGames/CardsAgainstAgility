@@ -1,6 +1,6 @@
 # Compiled #
 *.class
 *.apk
-*R.java
+R.java
 *CardsAgainstAgility/bin/*
 *CardsAgainstAgility/gen/*
