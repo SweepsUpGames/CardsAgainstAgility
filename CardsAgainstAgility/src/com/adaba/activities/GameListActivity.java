@@ -15,6 +15,7 @@ import org.apache.http.util.EntityUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -30,22 +31,21 @@ public class GameListActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main); // TODO Bill will create layout
+		setContentView(R.layout.activity_gamelist); // TODO Bill will create layout
 
 		List<String> games = new LinkedList<String>();
 		try {
+			Log.d("GameView", "Populating onCreate()");
 			HttpClient httpclient = new DefaultHttpClient();
-			HttpGet httpGet = new HttpGet(host);
+			HttpGet httpGet = new HttpGet(host);			
 			httpGet.getParams().setParameter(GameServlet.GET_KEY, GameServlet.GET_GAMEROOMS_VAL);
+			Log.d("GameView GET with params: ", httpGet.getParams().toString());
 			HttpResponse response = httpclient.execute(httpGet);
-			System.out.println(EntityUtils.toString(response.getEntity()));
-			for (String str : EntityUtils.toString(response.getEntity()).split("\n")) games.add(str); // TODO LOL
-		} catch (ClientProtocolException e) { e.printStackTrace(); 
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 		
+			Log.println(1, "Response", EntityUtils.toString(response.getEntity()));
+			//			for (String str : EntityUtils.toString(response.getEntity()).split("\n")) games.add(str); // TODO LOL
+		} catch (ClientProtocolException e) { Log.e("GameView", e.toString()); 
+		} catch (ParseException e) { Log.e("GameView", e.toString());
+		} catch (IOException e) { Log.e("GameView", e.toString()); } 		
 
 		// Create ListView backed by games returned from GET to server
 		ListView gamesView = (ListView) findViewById(R.id.gameRoomList);
@@ -53,12 +53,11 @@ public class GameListActivity extends Activity {
 		gamesView.setAdapter(adapt);
 
 		// TODO pass info about selection to next activity
-		Button joinButton = (Button) findViewById(R.id.createGameButton);
+		Button joinButton = (Button) findViewById(R.id.joinGameButton);
 		joinButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				createGame();
-
 			}
 		});
 	}

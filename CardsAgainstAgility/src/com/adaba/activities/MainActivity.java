@@ -10,14 +10,12 @@ import android.widget.Button;
 import com.adaba.R;
 
 public class MainActivity extends Activity {
-	static final String host = "http://10.0.2.2:8080/ServerAgainstAgility/DefaultServlet";
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		Button selectButton = (Button) findViewById(R.id.createGameButton);
+		Button selectButton = (Button) findViewById(R.id.joinGameButton);
 		selectButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

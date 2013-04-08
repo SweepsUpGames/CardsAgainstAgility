@@ -30,7 +30,7 @@ public class GameServlet extends HttpServlet {
 	/**
 	 * Global variable: parameter used to request game list
 	 */
-	public static final String GET_KEY = "key";
+	public static final String GET_KEY = "req";
 	public static final String GET_GAMEROOMS_VAL = "roomlist";
 
 	public static final String POST_KEY = "action";

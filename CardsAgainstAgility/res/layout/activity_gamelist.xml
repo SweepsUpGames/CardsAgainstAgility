@@ -15,15 +15,24 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text= "@string/join_game" />
+        android:text="@string/join_selected_game" />
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="@string/main_title"
+        android:text="@string/game_room"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ListView
+        android:id="@+id/gameRoomList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/joinGameButton"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="10dp" >
+    </ListView>
 
 </RelativeLayout>
