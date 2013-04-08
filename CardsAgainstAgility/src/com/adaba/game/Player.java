@@ -3,7 +3,7 @@ package com.adaba.game;
 import java.util.HashMap;
 
 import com.adaba.cards.Card;
-import com.adaba.deck.Hand;
+import com.adaba.deck.Deck.Hand;
 
 public class Player
 {

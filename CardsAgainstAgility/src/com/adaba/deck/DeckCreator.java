@@ -12,7 +12,7 @@ import com.adaba.cards.Card.Type;
 
 public class DeckCreator {
 
-	public static List<Card> makeCoHDeck(InputStream cardFile, Type type) throws IOException {
+	public static Deck makeCoHDeck(InputStream cardFile, Type type) throws IOException {
 		InputStreamReader isReader = new InputStreamReader(cardFile);
 		BufferedReader reader = new BufferedReader(isReader);
 		List<Card> cardList = new ArrayList<Card>();
@@ -29,8 +29,6 @@ public class DeckCreator {
 			}
 		}
 		reader.close();
-		return cardList;
-
+		return new Deck(cardList);
 	}
-
 }

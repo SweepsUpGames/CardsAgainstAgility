@@ -3,8 +3,6 @@ package com.adaba.game;
 import java.util.ArrayList;
 
 import com.adaba.cards.BlackCard;
-import com.adaba.cards.Card;
-import com.adaba.cards.Type;
 
 public class Game 
 {
