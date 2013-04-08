@@ -28,7 +28,7 @@ public class PlayerViewActivity extends Activity {
 			
 			// Get a list of the card names in current hand
 			List<String> stringHand = new LinkedList<String>();
-			for(Card c: hand.getCards()) { stringHand.add(c.toString()); }
+			for(Card c: hand.getCards()) { stringHand.add(c.getText()); }
 			
 			// Create ListView backed by names of Cards in Hand
 			ListView handView = (ListView) findViewById(R.id.handList);
