@@ -2,5 +2,5 @@
 *.class
 *.apk
 R.java
-*CardsAgainstAgility/bin/*
-*CardsAgainstAgility/gen/*
+./CardsAgainstAgility/bin/*
+./CardsAgainstAgility/gen/*
