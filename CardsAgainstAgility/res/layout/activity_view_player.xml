@@ -12,99 +12,35 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="#000000"
-        android:textColor="#F0F0F0"
+        android:clickable="false"
         android:ems="10"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:linksClickable="false"
         android:singleLine="true"
-        android:text="Black Card" >
+        android:text="Black Card"
+        android:textColor="#F0F0F0" >
 
         <requestFocus />
     </EditText>
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="wrap_content"
+    <ListView
+        android:id="@+id/handList"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/button1"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/editText1"
-        android:layout_marginTop="34dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Card 1" />
+        android:layout_below="@+id/editText1" >
 
-    <EditText
-        android:id="@+id/editText3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/editText2"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Card 2" />
-
-    <EditText
-        android:id="@+id/editText4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/editText3"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="card 3" />
-
-    <EditText
-        android:id="@+id/editText5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/editText4"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="card 4" />
-
-    <EditText
-        android:id="@+id/editText6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/editText5"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Card 5" />
-
-    <EditText
-        android:id="@+id/editText7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/editText6"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Card 6" />
-
-    <EditText
-        android:id="@+id/editText8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/editText7"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="card 7" />
+    </ListView>
 
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/editText8"
         android:text="Confirm Selection" />
 
 </RelativeLayout>
