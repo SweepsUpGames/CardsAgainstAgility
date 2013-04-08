@@ -12,6 +12,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -20,7 +21,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 public class MainActivity extends Activity {
-	static final String host = "http://10.0.2.2:8080/ServerAgainstAgility/DefaultServlet";
+	static final String host = "http://10.0.2.2:8080/ServerAgainstAgility";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,13 +29,32 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		List<String> listOfGames = new LinkedList<String>();
-		listOfGames.add("first");
-		listOfGames.add("second");
-		listOfGames.add("third");
-		listOfGames.add("forth");
-		listOfGames.add("fifth");
-		listOfGames.add("sixth");
-		listOfGames.add("seventh");
+		try {
+			Uri.Builder builder = Uri.parse(host).buildUpon();
+			builder.appendPath("/DefaultServlet")
+			.appendQueryParameter("req", "gamelist");
+			Uri uri = builder.build();
+
+			HttpClient httpclient = new DefaultHttpClient();
+			System.out.println(uri.toString());
+			HttpGet httpGet = new HttpGet(uri.toString());
+			HttpResponse response = httpclient.execute(httpGet);
+			String games = EntityUtils.toString(response.getEntity());
+			System.out.println(games);
+			if (games != null) 
+				for (String game : games.split("\n")) { 
+					System.out.println(game);
+					listOfGames.add(game);
+				}
+		} catch (ClientProtocolException e) { e.printStackTrace(); } 
+		catch (IOException e) { e.printStackTrace(); }
+//		listOfGames.add("first");
+//		listOfGames.add("second");
+//		listOfGames.add("third");
+//		listOfGames.add("forth");
+//		listOfGames.add("fifth");
+//		listOfGames.add("sixth");
+//		listOfGames.add("seventh");
 
 		ListView gameList = (ListView) findViewById(R.id.gameRoomList);
 		ArrayAdapter<String> adapt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, listOfGames);
