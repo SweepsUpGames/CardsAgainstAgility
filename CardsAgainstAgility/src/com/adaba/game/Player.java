@@ -1,6 +1,7 @@
 package com.adaba.game;
 
 import java.util.HashMap;
+import android.provider.Settings;
 
 import com.adaba.cards.Card;
 import com.adaba.deck.Deck.Hand;
@@ -14,6 +15,7 @@ public class Player
 	public Player()
 	{
 		this.wins = 0;
+		this.name = Settings.Secure.ANDROID_ID;
 	}
 	
 	public int getWins() {
