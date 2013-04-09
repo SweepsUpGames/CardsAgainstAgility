@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.adaba.cards.Card;
+import com.adaba.cards.WhiteCard;
 
 public class Deck {
 	private List<Card> cards;
@@ -30,9 +31,9 @@ public class Deck {
 	}
 
 	public Hand drawHand(){
-		List<Card> newHand = new ArrayList<Card>();
+		List<WhiteCard> newHand = new ArrayList<WhiteCard>();
 		for(int i = 0; i<Hand.MaxSize; i++){
-			newHand.add(cards.get(i));
+			newHand.add((WhiteCard) cards.get(i));
 		}
 
 		return new Hand(newHand);
@@ -43,21 +44,21 @@ public class Deck {
 	}
 
 	public class Hand {
-		private List<Card> hand;
+		private List<WhiteCard> hand;
 		public static final int MaxSize = 7;
 
-		public Hand(List<Card> cards){ this.hand = cards; }
+		public Hand(List<WhiteCard> cards){ this.hand = cards; }
 
-		public void addCard(Card c) { hand.add(c); }
+		public void addCard(WhiteCard c) { hand.add(c); }
 
 		public String toString() {
 			StringBuffer buf = new StringBuffer();
 			buf.append(String.format("With %d/%d cards:\n", hand.size(), Hand.MaxSize));
-			for (Card card : hand) buf.append(card.toString());
+			for (WhiteCard card : hand) buf.append(card.toString());
 			return buf.toString();
 		}
 
-		public Card getCard(int card) { return hand.get(card); }
-		public List<Card> getCards() { return hand; }
+		public WhiteCard getCard(int card) { return hand.get(card); }
+		public List<WhiteCard> getCards() { return hand; }
 	}
 }

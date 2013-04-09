@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import com.adaba.R;
 import com.adaba.cards.Card;
-import com.adaba.cards.Card.Type;
+import com.adaba.cards.Type;
 import com.adaba.deck.Deck;
 import com.adaba.deck.Deck.Hand;
 import com.adaba.deck.DeckCreator;
