@@ -25,7 +25,7 @@ import android.widget.ListView;
 import com.adaba.R;
 
 public class GameListActivity extends Activity {
-	static final String host = "http://10.0.2.2:8080/ServerAgainstAgility/GameServlet";
+	static final String host = "http://129.21.134.123:8080/ServerAgainstAgility/GameServlet?req=roomlist";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +36,19 @@ public class GameListActivity extends Activity {
 		try {
 			Log.d("GameView", "Populating onCreate()");
 			HttpClient httpclient = new DefaultHttpClient();
-			HttpGet httpGet = new HttpGet(host);			
-			httpGet.getParams().setParameter("req", "roomlist");
+			HttpGet httpGet = new HttpGet(host);	
+			Log.d("GameView", "Connecting with string " + httpGet.getURI());
 			Log.d("GameView GET with params: ", httpGet.getParams().toString());
-			HttpResponse response = httpclient.execute(httpGet);
-			Log.d("Response", EntityUtils.toString(response.getEntity()));
-//			for (String str : EntityUtils.toString(response.getEntity()).split("\n")) games.add(str); // TODO LOL
+			HttpResponse response = httpclient.execute(httpGet); 						
+			String respString = EntityUtils.toString(response.getEntity());
+
+			Log.d("Response", respString);
+			for (String str : respString.split("\n")) games.add(str); // TODO LOL
 		} catch (ClientProtocolException e) { Log.e("GameView", e.toString()); 
 		} catch (ParseException e) { Log.e("GameView", e.toString());
-		} catch (IOException e) { Log.e("GameView", e.toString()); } 		
+		} catch (IOException e) { Log.e("GameView", e.toString()); 
+		} catch (Exception e) { Log.e("Oh Shit", e.toString()); }
+
 
 		// Create ListView backed by games returned from GET to server
 		ListView gamesView = (ListView) findViewById(R.id.gameRoomList);
