@@ -9,8 +9,8 @@ import java.util.List;
 
 import com.adaba.cards.BlackCard;
 import com.adaba.cards.Card;
-import com.adaba.cards.WhiteCard;
 import com.adaba.cards.Type;
+import com.adaba.cards.WhiteCard;
 
 public class DeckCreator {
 

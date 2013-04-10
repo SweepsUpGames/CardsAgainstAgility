@@ -1,6 +1,7 @@
 package com.adaba.game;
 
 import java.util.HashMap;
+
 import android.provider.Settings;
 
 import com.adaba.cards.Card;

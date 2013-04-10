@@ -23,7 +23,6 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.adaba.R;
-import com.adaba.servlets.GameServlet;
 
 public class GameListActivity extends Activity {
 	static final String host = "http://10.0.2.2:8080/ServerAgainstAgility/GameServlet";
@@ -38,11 +37,11 @@ public class GameListActivity extends Activity {
 			Log.d("GameView", "Populating onCreate()");
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet(host);			
-			httpGet.getParams().setParameter(GameServlet.GET_KEY, GameServlet.GET_GAMEROOMS_VAL);
+			httpGet.getParams().setParameter("req", "roomlist");
 			Log.d("GameView GET with params: ", httpGet.getParams().toString());
 			HttpResponse response = httpclient.execute(httpGet);
-			Log.println(1, "Response", EntityUtils.toString(response.getEntity()));
-			//			for (String str : EntityUtils.toString(response.getEntity()).split("\n")) games.add(str); // TODO LOL
+			Log.d("Response", EntityUtils.toString(response.getEntity()));
+//			for (String str : EntityUtils.toString(response.getEntity()).split("\n")) games.add(str); // TODO LOL
 		} catch (ClientProtocolException e) { Log.e("GameView", e.toString()); 
 		} catch (ParseException e) { Log.e("GameView", e.toString());
 		} catch (IOException e) { Log.e("GameView", e.toString()); } 		
