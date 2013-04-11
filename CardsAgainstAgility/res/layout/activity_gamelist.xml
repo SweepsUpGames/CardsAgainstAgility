@@ -9,14 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <Button
-        android:id="@+id/joinGameButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/join_selected_game" />
-
     <TextView
         android:id="@+id/textView1"
         android:layout_width="fill_parent"
@@ -30,7 +22,6 @@
         android:id="@+id/gameRoomList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/joinGameButton"
         android:layout_below="@+id/textView1"
         android:layout_marginTop="10dp" >
     </ListView>
