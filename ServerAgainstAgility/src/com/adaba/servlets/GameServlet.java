@@ -1,6 +1,7 @@
 package com.adaba.servlets;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,16 +34,6 @@ public class GameServlet extends HttpServlet {
 	 * SLF4J logger for this class
 	 */
 	private final Logger logger = LoggerFactory.getLogger(GameServlet.class);
-
-	/**
-	 * Global variable: parameter used to request game list
-	 */
-	public static final String GET_KEY = "req";
-	public static final String GET_GAMEROOMS_VAL = "roomlist";
-
-	public static final String POST_KEY = "action";
-	public static final String POST_NEWGAME_VAL = "create";
-	public static final String POST_JOINGAME_VAL = "join";
 
 	private final Map<String, Game> games = new HashMap<String, Game>();
 
@@ -97,14 +88,12 @@ public class GameServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/plain");
-		String req = request.getParameter(GET_KEY); // What do we want to get?
 
+		String req = request.getHeader("req"); // What do we want to get?
 		if (req == null) {			
-		} else if (req.equalsIgnoreCase(GET_GAMEROOMS_VAL)) {
+		} else if (req.equalsIgnoreCase("roomlist")) {
 			logger.info("GET received for gameroom list.");
-
-			for (String game : games.keySet())
-				response.getWriter().append(game + "\n");
+			for (String game : games.keySet()) response.getWriter().append(game + "\n");
 		} else if (req.equalsIgnoreCase("hand")) {
 			logger.info("GET received for hand.");
 			Game game = games.get(request.getParameter("game"));
@@ -119,7 +108,8 @@ public class GameServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/plain");
-		String action = request.getHeader("game"); // What do we want to get?
+
+		String action = request.getHeader("action"); // What do we want to get?
 		if (action == null) {
 		} else if (action.equalsIgnoreCase("join")) {
 			String game = request.getHeader("game"); // What do we want to get?
@@ -128,6 +118,22 @@ public class GameServlet extends HttpServlet {
 				if (games.get(game) != null) {
 					games.get(game).addPlayer(new Player("foo"));
 				}
+			}
+		} else if (action.equalsIgnoreCase("create")) {
+			String game = request.getHeader("game"); // What do we want to get?
+			if (game != null) {
+				logger.info("POST received for creating game " + game);
+
+				// Add some dummy data
+				Deck whiteDeck = null;
+				Deck blackDeck = null;
+				try {
+					whiteDeck = DeckCreator.makeCoHDeck(Type.WHITE);
+					blackDeck = DeckCreator.makeCoHDeck(Type.BLACK);
+				} catch (IOException e) {
+					logger.error("Exception while reading card resource", e);
+				}
+				games.put(game, new Game(Collections.<Player>emptyList(), whiteDeck, blackDeck));
 			}
 		} else if (action.equalsIgnoreCase("play")) {
 			String card = request.getHeader("card"); // What do we want to get?

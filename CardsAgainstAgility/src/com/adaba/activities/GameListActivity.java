@@ -55,7 +55,8 @@ public class GameListActivity extends Activity {
 				try {
 					Log.d("GameView", "Populating onCreate()");
 					HttpClient httpclient = new DefaultHttpClient();
-					HttpGet httpGet = new HttpGet(host + "?req=roomlist");	
+					HttpGet httpGet = new HttpGet(host);
+					httpGet.addHeader("req", "roomlist");
 					Log.d("GameView", "Connecting with string " + httpGet.getURI());
 					HttpResponse response = httpclient.execute(httpGet);
 					HttpEntity resEntityGet = response.getEntity();
