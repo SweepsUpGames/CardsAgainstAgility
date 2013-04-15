@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.adaba.R;
 
 public class PlayerViewActivity extends Activity {
-	static final String host = "http://129.21.133.101:8080/ServerAgainstAgility/GameServlet";
+	static final String host = "http://129.21.133.138:8080/ServerAgainstAgility/GameServlet";
 
 	protected String game;
 

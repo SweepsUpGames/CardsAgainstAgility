@@ -2,6 +2,7 @@ package com.adaba.activities;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpEntity;
@@ -13,9 +14,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -28,7 +31,7 @@ import android.widget.ListView;
 import com.adaba.R;
 
 public class GameListActivity extends Activity {
-	static final String host = "http://129.21.133.101:8080/ServerAgainstAgility/GameServlet";
+	static final String host = "http://129.21.133.138:8080/ServerAgainstAgility/GameServlet";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +82,16 @@ public class GameListActivity extends Activity {
 			ArrayAdapter<String> adapt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, games);
 			gamesView.setAdapter(adapt);
 
+			final Intent intent = new Intent(this, PlayerViewActivity.class);			
 			gamesView.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> adapter, View view, int itemInt, long noClue) {
-					joinGame(gamesView.getItemAtPosition(itemInt).toString());
+					String game = gamesView.getItemAtPosition(itemInt).toString();
+					joinGame(game);
+
+					// Intent to next activity					
+					intent.putExtra("game", game);
+					startActivity(intent);
 				}
 			});
 		} catch (InterruptedException e) {
@@ -100,16 +109,11 @@ public class GameListActivity extends Activity {
 			HttpPost httpPost = new HttpPost(host);
 			httpPost.addHeader("action", "join");
 			httpPost.addHeader("game", game);
-			httpPost.addHeader("pid", Long.toString(15l)); // TODO
+			httpPost.addHeader("pid", getPID());
 			httpPost.addHeader("pname", "Putin"); // TODO
 			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 			new DefaultHttpClient().execute(httpPost); 						
-		} catch (Exception e) { Log.e("GameView", e.toString()); }
-
-		// Intent to next activity
-		Intent intent = new Intent(this, PlayerViewActivity.class);
-		intent.putExtra("game", game);
-		startActivity(intent);
+		} catch (Exception e) { Log.e("GameView", e.toString()); }		
 	}
 
 	private void createGame(String game) {
@@ -134,5 +138,17 @@ public class GameListActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+
+	private String getPID() {
+		final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+		final String tmDevice, tmSerial, androidId;
+		tmDevice = "" + tm.getDeviceId();
+		tmSerial = "" + tm.getSimSerialNumber();
+		androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+
+		UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+		return deviceUuid.toString();
 	}
 }

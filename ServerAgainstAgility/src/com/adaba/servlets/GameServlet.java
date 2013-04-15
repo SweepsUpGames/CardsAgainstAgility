@@ -137,6 +137,11 @@ public class GameServlet extends HttpServlet {
 				}
 				games.put(game, new Game(Collections.<Player>emptyList(), whiteDeck, blackDeck));
 			}
+		} else if (action.equalsIgnoreCase("start")) {
+			String game = request.getHeader("game"); // What do we want to get?
+			if (game != null) {
+				logger.info("POST received for starting game " + game);
+			}
 		} else if (action.equalsIgnoreCase("play")) {
 			String card = request.getHeader("card"); // What do we want to get?
 			if (card != null) {
