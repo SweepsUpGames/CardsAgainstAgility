@@ -60,7 +60,7 @@ public class GameListActivity extends Activity {
 		createGameButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				createGame();
+				createGame("Test Game Creation");
 			}
 		});
 	}
@@ -68,6 +68,7 @@ public class GameListActivity extends Activity {
 	private ArrayList<String> getUpdatedGameList() {
 		ArrayList<String> games = null;
 		AsyncTask<Void, Void, ArrayList<String>> gamelistGetTask = new GetGameRoomList();
+
 		gamelistGetTask.execute();
 		try {
 			games = (ArrayList<String>) gamelistGetTask.get();
@@ -80,11 +81,13 @@ public class GameListActivity extends Activity {
 	}
 
 	private void joinGame(String game) {
-		// Do POST to tell server we're joining a game
 		try {
+			// Do POST to tell server we're joining a game
 			HttpPost httpPost = new HttpPost(host);
 			httpPost.addHeader("action", "join");
 			httpPost.addHeader("game", game);
+			httpPost.addHeader("pid", Long.toString(15l)); // TODO
+			httpPost.addHeader("pname", "Putin"); // TODO
 			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 			new DefaultHttpClient().execute(httpPost); 						
 		} catch (Exception e) { Log.e("GameView", e.toString()); }
@@ -95,16 +98,16 @@ public class GameListActivity extends Activity {
 		startActivity(intent);
 	}
 
-	private void createGame() {
-		// Do POST to tell server we're joining a game
+	private void createGame(String game) {
 		try {
+			// Do POST to tell server we're creating a game
 			HttpPost httpPost = new HttpPost(host);
 			httpPost.addHeader("action", "create");
-			httpPost.addHeader("game", "New Test Game");
+			httpPost.addHeader("game", game);
 			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 			new DefaultHttpClient().execute(httpPost);
 		} catch (Exception e) { Log.e("GameView", e.toString()); }
-		joinGame("New Test Game");
+		joinGame(game);
 	}
 
 	@Override
@@ -122,6 +125,7 @@ public class GameListActivity extends Activity {
 				Log.d("GameView", "Populating onCreate()");
 				HttpClient httpclient = new DefaultHttpClient();
 				HttpGet httpGet = new HttpGet(host + "?req=roomlist");	
+				httpGet.addHeader("req", "roomlist");
 				Log.d("GameView", "Connecting with string " + httpGet.getURI());
 				HttpResponse response = httpclient.execute(httpGet);
 				HttpEntity resEntityGet = response.getEntity();
@@ -135,4 +139,5 @@ public class GameListActivity extends Activity {
 			return games;
 		}
 	};
+	
 }
