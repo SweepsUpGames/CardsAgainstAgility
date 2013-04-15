@@ -8,6 +8,6 @@
     <string name="join_game">Join a game.</string>
     <string name="join_selected_game">Join the selected game.</string>
     <color name="DK_GREY">#41383C</color>
-    <string name="game_room">Select a game room.</string>
+    <string name="game_room">Click on a game room to join a game</string>
 
 </resources>
