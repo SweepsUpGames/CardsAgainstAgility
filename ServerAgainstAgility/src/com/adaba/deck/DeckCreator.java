@@ -20,8 +20,9 @@ public class DeckCreator {
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(DeckCreator.class);
 
-	protected static final String WHITE_PATH = "/WEB-INF/resources/white.txt";
-	protected static final String BLACK_PATH = "/WEB-INF/resources/black.txt";
+	// TODO
+	protected static final String WHITE_PATH = "C:/Users/ThaShepherd/dev/Tomcat7/wtpwebapps/ServerAgainstAgility/WEB-INF/resources/white.txt";
+	protected static final String BLACK_PATH = "C:/Users/ThaShepherd/dev/Tomcat7/wtpwebapps/ServerAgainstAgility/WEB-INF/resources/black.txt";
 
 	public static Deck makeCoHDeck(Type type) throws IOException {
 		String resource = null;
@@ -37,11 +38,12 @@ public class DeckCreator {
 		List<String> lines = new LinkedList<String>();
 		BufferedReader reader = null;
 		try {
+			logger.debug("Opening resource {}", resource);
 			reader = new BufferedReader(new FileReader(resource));
 			String line;
 			while ((line = reader.readLine()) != null) lines.add(line);		
 		} finally {
-				if (reader != null) reader.close();
+			if (reader != null) reader.close();
 		}
 
 		// Parse cards
@@ -49,14 +51,15 @@ public class DeckCreator {
 		for (String line : lines) {
 			if (line.equals("###")) {
 				break;
-			} else {
-				String[] parseMe = line.split(",");
-				String text = parseMe[0];
-				int blanks = Integer.parseInt(parseMe[1]);
-				if (type == Type.BLACK){
-					cardlist.add(new BlackCard(text, blanks));
+			} else {									
+				if (type == Type.BLACK) {
+					String[] lineSplit = line.split("\\|");
+					String cardText = lineSplit[0];
+					assert(lineSplit.length > 1);
+					int blanks = Integer.parseInt(lineSplit[1]);
+					cardlist.add(new BlackCard(cardText, blanks));
 				} else if (type == Type.WHITE) {
-					cardlist.add(new WhiteCard(text));
+					cardlist.add(new WhiteCard(line));
 				}
 			}
 		}

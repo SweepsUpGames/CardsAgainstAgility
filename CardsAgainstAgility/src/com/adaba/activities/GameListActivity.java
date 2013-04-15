@@ -27,7 +27,7 @@ import android.widget.ListView;
 import com.adaba.R;
 
 public class GameListActivity extends Activity {
-	static final String host = "http://192.168.102.50:8080/ServerAgainstAgility/GameServlet";
+	static final String host = "http://129.21.133.101:8080/ServerAgainstAgility/GameServlet";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
