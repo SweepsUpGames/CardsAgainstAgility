@@ -2,8 +2,6 @@ package com.adaba.game;
 
 import java.util.HashMap;
 
-import android.provider.Settings;
-
 import com.adaba.cards.Card;
 import com.adaba.deck.Deck.Hand;
 
@@ -12,13 +10,13 @@ public class Player
 	private int wins;
 	private Hand hand;
 	private String name;
-	
-	public Player()
+
+	public Player(String name)
 	{
 		this.wins = 0;
-		this.name = Settings.Secure.ANDROID_ID;
+		this.name = name;
 	}
-	
+
 	public int getWins() {
 		return wins;
 	}
@@ -37,7 +35,7 @@ public class Player
 	{
 		return hand.getCard(card);
 	}
-	
+
 	public Player vote(HashMap<Player,Card> nominees)
 	{
 		return (Player)nominees.keySet().toArray()[0];
