@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.adaba.R;
@@ -34,6 +35,19 @@ public class GameListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gamelist); // TODO Bill will create layout
 
+		updateGameList();
+
+		// Set create game listenver
+		Button createGameButton = (Button) findViewById(R.id.newGameButton);
+		createGameButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				createGame();
+			}
+		});
+	}
+
+	private void updateGameList() {
 		AsyncTask<Void, Void, List<String>> gamelistGetTask = new AsyncTask<Void, Void, List<String>>() {
 			@Override
 			protected List<String> doInBackground(Void... arg0) {
@@ -83,6 +97,7 @@ public class GameListActivity extends Activity {
 		// Do POST to tell server we're joining a game
 		try {
 			HttpPost httpPost = new HttpPost(host);
+			httpPost.addHeader("action", "join");
 			httpPost.addHeader("game", game);
 			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 			new DefaultHttpClient().execute(httpPost); 						
@@ -92,6 +107,18 @@ public class GameListActivity extends Activity {
 		Intent intent = new Intent(this, PlayerViewActivity.class);
 		intent.putExtra("game", game);
 		startActivity(intent);
+	}
+
+	private void createGame() {
+		// Do POST to tell server we're joining a game
+		try {
+			HttpPost httpPost = new HttpPost(host);
+			httpPost.addHeader("action", "create");
+			httpPost.addHeader("game", "New Test Game");
+			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
+			new DefaultHttpClient().execute(httpPost);
+			updateGameList();
+		} catch (Exception e) { Log.e("GameView", e.toString()); }
 	}
 
 	@Override
