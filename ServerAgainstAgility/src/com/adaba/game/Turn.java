@@ -19,11 +19,9 @@ public class Turn
 		this.choices = new HashMap<Player,Card>();
 		this.tsar = players.remove(tsar);
 		
-		for (Player player : players) {
-			for (int i = 0; i < blackCard.getBlanks(); i++) {
-				//players.get(i).getHand().drawCard();
-			}
-			choices.put(player, player.playCard(0));
+		while(choices.size() != players.size() - 1)
+		{
+			
 		}
 		
 		this.winner = this.tsar.vote(choices);
