@@ -37,30 +37,7 @@ public class PlayerViewActivity extends Activity {
 		TextView gameName = (TextView) findViewById(R.id.gameName);
 		gameName.setText(game);
 
-		AsyncTask<Void, Void, List<String>> cardlistGetTask = new AsyncTask<Void, Void, List<String>>() {
-			@Override
-			protected List<String> doInBackground(Void... arg0) {
-				List<String> cards = new LinkedList<String>();
-				try {
-					Log.d("PlayerView", "Populating onCreate()");
-					HttpClient httpclient = new DefaultHttpClient();
-					HttpGet httpGet = new HttpGet(host);
-					httpGet.addHeader("req", "hand");
-					httpGet.addHeader("game", game);
-					httpGet.addHeader("player", "Yossarian");
-					Log.d("PlayerView", "Connecting with string " + httpGet.getURI());
-					HttpResponse response = httpclient.execute(httpGet);
-					HttpEntity resEntityGet = response.getEntity();
-					if (resEntityGet != null) {
-						String respString = EntityUtils.toString(response.getEntity());
-						Log.d("Response", respString);					
-						for (String str : respString.split("\n")) cards.add(str);
-					}
-				} catch (Exception e) { 
-					Log.e("PlayerView", e.toString()); }
-				return cards;
-			}
-		};
+		AsyncTask<Void, Void, List<String>> cardlistGetTask = new GetPlayerViewData();
 		cardlistGetTask.execute();
 		List<String> games;
 		try {
@@ -85,4 +62,39 @@ public class PlayerViewActivity extends Activity {
 		}
 	}
 
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+	  super.onSaveInstanceState(savedInstanceState);
+	  // Save UI state changes to the savedInstanceState.
+	  // This bundle will be passed to onCreate if the process is
+	  // killed and restarted.
+	  savedInstanceState.putBoolean("MyBoolean", true);
+
+	}
+	
+	class GetPlayerViewData extends AsyncTask<Void, Void, List<String>> {
+		@Override
+		protected List<String> doInBackground(Void... arg0) {
+			List<String> cards = new LinkedList<String>();
+			try {
+				Log.d("PlayerView", "Populating onCreate()");
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpGet httpGet = new HttpGet(host);
+				httpGet.addHeader("req", "hand");
+				httpGet.addHeader("game", game);
+				httpGet.addHeader("player", "Yossarian");
+				Log.d("PlayerView", "Connecting with string " + httpGet.getURI());
+				HttpResponse response = httpclient.execute(httpGet);
+				HttpEntity resEntityGet = response.getEntity();
+				if (resEntityGet != null) {
+					String respString = EntityUtils.toString(response.getEntity());
+					Log.d("Response", respString);					
+					for (String str : respString.split("\n")) cards.add(str);
+				}
+			} catch (Exception e) { 
+				Log.e("PlayerView", e.toString()); }
+			return cards;
+		}
+	};
+	
 }
