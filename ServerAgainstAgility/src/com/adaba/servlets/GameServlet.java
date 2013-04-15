@@ -54,9 +54,9 @@ public class GameServlet extends HttpServlet {
 			logger.error("Exception while reading card resource", e);
 		}
 		List<Player> players = new LinkedList<Player>();
-		players.add(new Player("Todd"));
-		players.add(new Player("Jeff"));
-		players.add(new Player("Kim"));
+		players.add(new Player(6l, "Todd"));
+		players.add(new Player(7l, "Jeff"));
+		players.add(new Player(8l, "Kim"));
 		games.put("TestGame w/ 3 players", new Game(players, whiteDeck, blackDeck));
 
 		try {
@@ -66,11 +66,11 @@ public class GameServlet extends HttpServlet {
 			logger.error("Exception while reading card resource", e);
 		}
 		players = new LinkedList<Player>();
-		players.add(new Player("Bill"));
-		players.add(new Player("Drew"));
-		players.add(new Player("Adam"));
-		players.add(new Player("Mark"));
-		players.add(new Player("Phil"));
+		players.add(new Player(1l, "Bill"));
+		players.add(new Player(2l, "Drew"));
+		players.add(new Player(3l, "Adam"));
+		players.add(new Player(4l, "Mark"));
+		players.add(new Player(5l, "Phil"));
 		games.put("TestGame w/ 5 players", new Game(players, whiteDeck, blackDeck));
 
 		try {
@@ -116,7 +116,9 @@ public class GameServlet extends HttpServlet {
 			if (game != null) {
 				logger.info("POST received for joining game " + game);
 				if (games.get(game) != null) {
-					games.get(game).addPlayer(new Player("foo"));
+					long pid = Long.parseLong(request.getHeader("pid"));
+					String pname = request.getHeader("pname");
+					games.get(game).addPlayer(new Player(pid, pname));
 				}
 			}
 		} else if (action.equalsIgnoreCase("create")) {

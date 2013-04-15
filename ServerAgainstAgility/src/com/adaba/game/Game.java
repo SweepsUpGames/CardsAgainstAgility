@@ -7,7 +7,6 @@ import com.adaba.deck.Deck;
 public class Game 
 {
 	private Player winner;
-	private List<Turn> turns;
 	private int goal;
 	
 	protected final List<Player> players;

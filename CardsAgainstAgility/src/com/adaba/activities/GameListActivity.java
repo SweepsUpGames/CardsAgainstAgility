@@ -42,7 +42,7 @@ public class GameListActivity extends Activity {
 		createGameButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				createGame();
+				createGame("Test Game Creation");
 			}
 		});
 	}
@@ -95,11 +95,13 @@ public class GameListActivity extends Activity {
 	}
 
 	private void joinGame(String game) {
-		// Do POST to tell server we're joining a game
 		try {
+			// Do POST to tell server we're joining a game
 			HttpPost httpPost = new HttpPost(host);
 			httpPost.addHeader("action", "join");
 			httpPost.addHeader("game", game);
+			httpPost.addHeader("pid", Long.toString(15l)); // TODO
+			httpPost.addHeader("pname", "Putin"); // TODO
 			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 			new DefaultHttpClient().execute(httpPost); 						
 		} catch (Exception e) { Log.e("GameView", e.toString()); }
@@ -110,14 +112,19 @@ public class GameListActivity extends Activity {
 		startActivity(intent);
 	}
 
-	private void createGame() {
-		// Do POST to tell server we're joining a game
+	private void createGame(String game) {
 		try {
+			// Do POST to tell server we're creating a game
 			HttpPost httpPost = new HttpPost(host);
 			httpPost.addHeader("action", "create");
-			httpPost.addHeader("game", "New Test Game");
+			httpPost.addHeader("game", game);
 			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 			new DefaultHttpClient().execute(httpPost);
+
+			// Join the game we created
+			joinGame(game);
+
+			// Update the game list
 			updateGameList();
 		} catch (Exception e) { Log.e("GameView", e.toString()); }
 	}
