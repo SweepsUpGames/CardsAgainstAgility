@@ -3,7 +3,6 @@
     <wb-module deploy-name="ServerAgainstAgility">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <wb-resource deploy-path="/" source-path="/lib"/>
         <property name="context-root" value="ServerAgainstAgility"/>
         <property name="java-output-path" value="/ServerAgainstAgility/build/classes"/>
     </wb-module>
