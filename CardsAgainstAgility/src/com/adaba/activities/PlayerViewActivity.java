@@ -36,7 +36,7 @@ public class PlayerViewActivity extends Activity {
 		game = this.getIntent().getStringExtra("game");
 		TextView gameName = (TextView) findViewById(R.id.gameName);
 		gameName.setText(game);
-
+		
 		AsyncTask<Void, Void, List<String>> cardlistGetTask = new GetPlayerViewData();
 		cardlistGetTask.execute();
 		List<String> games;
