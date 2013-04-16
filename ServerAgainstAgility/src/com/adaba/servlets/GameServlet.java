@@ -2,6 +2,7 @@ package com.adaba.servlets;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,6 +89,18 @@ public class GameServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/plain");
+
+		if (request.getParameter("debug") != null) {
+			Enumeration<String> e = request.getHeaderNames();
+			String headers = null;
+			while (e.hasMoreElements()) {
+				headers = (String) e.nextElement();
+				if (headers != null) {
+					response.getWriter().append(headers).append(": ").append(request.getHeader(headers)).append("\n");
+				}
+			}
+			return;
+		}
 
 		String req = request.getHeader("req"); // What do we want to get?
 		if (req == null) {			

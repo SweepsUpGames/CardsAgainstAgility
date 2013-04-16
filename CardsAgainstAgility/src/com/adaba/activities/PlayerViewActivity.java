@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.adaba.R;
 
 public class PlayerViewActivity extends Activity {
-	static final String host = "http://129.21.133.138:8080/ServerAgainstAgility/GameServlet";
+	static final String host = "http://129.21.99.102:8080/ServerAgainstAgility/GameServlet";
 
 	protected String game;
 
@@ -36,7 +36,7 @@ public class PlayerViewActivity extends Activity {
 		game = this.getIntent().getStringExtra("game");
 		TextView gameName = (TextView) findViewById(R.id.gameName);
 		gameName.setText(game);
-
+		
 		AsyncTask<Void, Void, List<String>> cardlistGetTask = new GetPlayerViewData();
 		cardlistGetTask.execute();
 		List<String> games;
