@@ -109,25 +109,35 @@ public class GameServlet extends HttpServlet {
 		if (req == null) {
 		} else if (req.equalsIgnoreCase("roomlist")) {
 			// Retrieve list of games
-			logger.info("GET received for gameroom list.");
-			for (String game : games.keySet()) response.getWriter().append(String.format("%s\n", game));
+			logger.info("GET received for gameroom list.");		
+			for (String game : games.keySet()) {
+				response.getWriter().append(String.format("%s\n", game));
+				logger.debug("Data written to GET: %s", game);
+			}
 		} else if (req.equalsIgnoreCase("hand")) {
 			// Retrieve a player's hand
-			logger.info("GET received for hand.");
+			logger.info("GET received for hand with parameters game:%s, player:%s", request.getParameter("game"), request.getParameter("pid"));
 			Game game = games.get(request.getParameter("game"));
 			String pid = request.getParameter("pid");
-			for (Card card : game.getPlayerHand(pid)) response.getWriter().append(String.format("%s\n", card.getText()));
+			for (Card card : game.getPlayerHand(pid)) {
+				response.getWriter().append(String.format("%s\n", card.getText()));
+				logger.debug("Data written to GET: %s", card.getText());
+			}
 		} else if (req.equalsIgnoreCase("tsarcard")) {
 			// Retrieve a certain game's current tsar card
-			logger.info("GET received for tsar card.");
+			logger.info("GET received for tsar card with parameters game:%s", request.getParameter("game"));
 			Game game = games.get(request.getParameter("game"));			
 			response.getWriter().append(String.format("%s\n", game.getCurrentTsarCard().getText()));
+			logger.debug("Data written to GET: %s", game.getCurrentTsarCard().getText());
 		} else if (req.equalsIgnoreCase("selected")) {
 			// Retrieve the cards that have been played in the current turn of a certain game
-			logger.info("GET received for selected cards.");
+			logger.info("GET received for selected cards with parameters game:%s", request.getParameter("game"));
 			Game game = games.get(request.getParameter("game"));
-			for (Card card : game.getChoices().values()) response.getWriter().append(String.format("%s\n", card.getText()));
-		} 
+			for (Card card : game.getChoices().values()) {
+				response.getWriter().append(String.format("%s\n", card.getText()));
+				logger.debug("Data written to GET: %s", card.getText());
+			}
+		} 		
 	}
 
 	/**
