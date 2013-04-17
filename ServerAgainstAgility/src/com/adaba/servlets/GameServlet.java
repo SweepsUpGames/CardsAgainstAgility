@@ -2,6 +2,7 @@ package com.adaba.servlets;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,6 +90,18 @@ public class GameServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/plain");
 
+		if (request.getParameter("debug") != null) {
+			Enumeration<String> e = request.getHeaderNames();
+			String headers = null;
+			while (e.hasMoreElements()) {
+				headers = (String) e.nextElement();
+				if (headers != null) {
+					response.getWriter().append(headers).append(": ").append(request.getHeader(headers)).append("\n");
+				}
+			}
+			return;
+		}
+
 		String req = request.getHeader("req"); // What do we want to get?
 		if (req == null) {			
 		} else if (req.equalsIgnoreCase("roomlist")) {
@@ -136,6 +149,11 @@ public class GameServlet extends HttpServlet {
 					logger.error("Exception while reading card resource", e);
 				}
 				games.put(game, new Game(Collections.<Player>emptyList(), whiteDeck, blackDeck));
+			}
+		} else if (action.equalsIgnoreCase("start")) {
+			String game = request.getHeader("game"); // What do we want to get?
+			if (game != null) {
+				logger.info("POST received for starting game " + game);
 			}
 		} else if (action.equalsIgnoreCase("play")) {
 			String card = request.getHeader("card"); // What do we want to get?

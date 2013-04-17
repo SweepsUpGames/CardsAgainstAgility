@@ -1,9 +1,8 @@
 package com.adaba.activities;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.UUID;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -14,9 +13,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -29,20 +29,20 @@ import android.widget.ListView;
 import com.adaba.R;
 
 public class GameListActivity extends Activity {
-	static final String host = "http://129.21.133.101:8080/ServerAgainstAgility/GameServlet";
-	
+	static final String host = "http://129.21.99.102:8080/ServerAgainstAgility/GameServlet";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ArrayList<String> games = null;
+		List<String> games = null;
 		setContentView(R.layout.activity_gamelist);
-		
-		if (savedInstanceState.getStringArrayList("GameList")!=null){
+
+		if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
 			games = savedInstanceState.getStringArrayList("GameList");
 		} else {
 			games = getUpdatedGameList();
 		}
-		
+
 		// Create ListView backed by games returned from GET to server
 		final ListView gamesView = (ListView) findViewById(R.id.gameRoomList);
 		ArrayAdapter<String> adapt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, games);
@@ -55,7 +55,7 @@ public class GameListActivity extends Activity {
 			}
 		});
 
-		// Set create game listenver
+		// Set create game listener
 		Button createGameButton = (Button) findViewById(R.id.newGameButton);
 		createGameButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -65,49 +65,67 @@ public class GameListActivity extends Activity {
 		});
 	}
 
-	private ArrayList<String> getUpdatedGameList() {
-		ArrayList<String> games = null;
-		AsyncTask<Void, Void, ArrayList<String>> gamelistGetTask = new GetGameRoomList();
-
+	/**
+	 * Asynchronously GET a list of games from the server
+	 * @return List<String> the updated list of games
+	 */
+	private List<String> getUpdatedGameList() {		
+		AsyncTask<Void, Void, List<String>> gamelistGetTask = new GetGameList();
 		gamelistGetTask.execute();
+
+		List<String> games = null;
 		try {
-			games = (ArrayList<String>) gamelistGetTask.get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		} 
+			games = (List<String>) gamelistGetTask.get();
+		} catch (Exception e) {
+			Log.e("GameListActivity", "Exception while updating game list", e);
+		}
 		return games;
 	}
 
-	private void joinGame(String game) {
-		try {
-			// Do POST to tell server we're joining a game
-			HttpPost httpPost = new HttpPost(host);
-			httpPost.addHeader("action", "join");
-			httpPost.addHeader("game", game);
-			httpPost.addHeader("pid", Long.toString(15l)); // TODO
-			httpPost.addHeader("pname", "Putin"); // TODO
-			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
-			new DefaultHttpClient().execute(httpPost); 						
-		} catch (Exception e) { Log.e("GameView", e.toString()); }
-
-		// Intent to next activity
-		Intent intent = new Intent(this, PlayerViewActivity.class);
-		intent.putExtra("game", game);
-		startActivity(intent);
+	/**
+	 * Asynchronously POST to the server to join a game
+	 * @param game String name of the game to join
+	 */
+	private void joinGame(final String game) {
+		// lol
+		AsyncTask<Void, Void, Void> joinPostTask = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... arg0) {
+				try {
+					// Do POST to tell server we're joining a game
+					HttpPost httpPost = new HttpPost(host);
+					httpPost.addHeader("action", "join");
+					httpPost.addHeader("game", game);
+					httpPost.addHeader("pid", getPID());
+					httpPost.addHeader("pname", "Putin"); // TODO
+					Log.d("GameView", "Sending POST with string " + httpPost.getURI());
+					new DefaultHttpClient().execute(httpPost); 						
+				} catch (Exception e) { Log.e("GameView", e.toString()); }
+				return null;
+			}
+		};
 	}
 
-	private void createGame(String game) {
-		try {
-			// Do POST to tell server we're creating a game
-			HttpPost httpPost = new HttpPost(host);
-			httpPost.addHeader("action", "create");
-			httpPost.addHeader("game", game);
-			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
-			new DefaultHttpClient().execute(httpPost);
-		} catch (Exception e) { Log.e("GameView", e.toString()); }
-		joinGame(game);
+	/**
+	 * Asynchronously create a game with the given name by POSTing to the server
+	 * @param game String name of the game to create
+	 */
+	private void createGame(final String game) {
+		AsyncTask<Void, Void, Void> joinPostTask = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... arg0) {
+				try {
+					// Do POST to tell server we're creating a game
+					HttpPost httpPost = new HttpPost(host);
+					httpPost.addHeader("action", "create");
+					httpPost.addHeader("game", game);
+					Log.d("GameView", "Sending POST with string " + httpPost.getURI());
+					new DefaultHttpClient().execute(httpPost);
+				} catch (Exception e) { Log.e("GameView", e.toString()); }
+				joinGame(game);
+				return null;
+			}
+		};
 	}
 
 	@Override
@@ -117,10 +135,29 @@ public class GameListActivity extends Activity {
 		return true;
 	}
 
-	class GetGameRoomList extends AsyncTask<Void, Void, ArrayList<String>> {
+	/**
+	 * Retrieve a unique device ID used to identify a player
+	 * @return String 64-bit hex
+	 */
+	private String getPID() {
+		final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+		final String tmDevice, tmSerial, androidId;
+		tmDevice = "" + tm.getDeviceId();
+		tmSerial = "" + tm.getSimSerialNumber();
+		androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+
+		UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+		return deviceUuid.toString();
+	}
+
+	/**
+	 * Asyncronous task used to get a list of games from the server 
+	 */
+	class GetGameList extends AsyncTask<Void, Void, List<String>> {
 		@Override
-		protected ArrayList<String> doInBackground(Void... arg0) {
-			ArrayList<String> games = new ArrayList<String>();
+		protected List<String> doInBackground(Void... arg0) {
+			List<String> games = new LinkedList<String>();
 			try {
 				Log.d("GameView", "Populating onCreate()");
 				HttpClient httpclient = new DefaultHttpClient();
@@ -139,5 +176,4 @@ public class GameListActivity extends Activity {
 			return games;
 		}
 	};
-	
 }
