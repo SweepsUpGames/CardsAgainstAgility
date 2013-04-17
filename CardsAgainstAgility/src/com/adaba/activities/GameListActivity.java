@@ -31,7 +31,6 @@ import android.widget.ListView;
 import com.adaba.R;
 
 public class GameListActivity extends Activity {
-	static final String host = "http://129.21.67.213:8080/ServerAgainstAgility/GameServlet";
 	static final String servletURI = "/GameServlet";
 	protected Properties props = new Properties();
 
@@ -47,15 +46,15 @@ public class GameListActivity extends Activity {
 			Log.e("PlayerViewActivity", "Error reading host IP from properties", e);
 		}
 
-		if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
-			games = savedInstanceState.getStringArrayList("GameList");
-		} else {
+		//if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
+		//	games = savedInstanceState.getStringArrayList("GameList");
+		//} else {
 			games = getUpdatedGameList();
-			if (savedInstanceState == null){
-				Log.d("HERE", "WHY?");
-			}
-			savedInstanceState.putStringArrayList("GameList", games);
-		}
+		//	if (savedInstanceState == null){
+		//		savedInstanceState = new Bundle();
+		//	}
+		//	savedInstanceState.putStringArrayList("GameList", games);
+		//}
 
 		// Create ListView backed by games returned from GET to server
 		final ListView gamesView = (ListView) findViewById(R.id.gameRoomList);
@@ -77,6 +76,7 @@ public class GameListActivity extends Activity {
 				createGame("Test Game Creation");
 			}
 		});
+		Log.d("here","onCreate done");
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class GameListActivity extends Activity {
 					String respString = EntityUtils.toString(response.getEntity());
 					Log.d("Response", respString);					
 					for (String str : respString.split("\n")) games.add(str);
-				}
+				} 
 			} catch (Exception e) { 
 				Log.e("GameView", e.toString()); }
 			return games;
