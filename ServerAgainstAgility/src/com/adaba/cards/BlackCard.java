@@ -24,13 +24,21 @@ public class BlackCard implements Card {
 	public boolean isComplete() { return numBlanks == cards.size(); }
 
 	public String toString() {
-		if (cards.size() == numBlanks) {
+		if (isComplete()) {
 			// Card has been filled
 			String completedText = this.text;
-			completedText.replaceAll("____", cards.remove(0).text);
+
+			// Either substitute a white card's text for a blank, or add it to the end
+			if (completedText.contains("____")) {
+				completedText = completedText.replace("____", cards.remove(0).text);
+			} else {
+				completedText = String.format("%s : %s", completedText, cards.remove(0).text);
+			}
 			return completedText;
+		} else {
+			// Card has not been filled
+			return this.text;
 		}
-		return this.text;
 	}
 	public String getText(){ return String.format("%s: %d", this.text, this.numBlanks); }
 	public int getBlanks() { return numBlanks; }
