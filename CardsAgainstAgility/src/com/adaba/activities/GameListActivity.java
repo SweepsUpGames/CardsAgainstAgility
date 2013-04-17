@@ -1,7 +1,6 @@
 package com.adaba.activities;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.apache.http.HttpEntity;
@@ -29,18 +28,22 @@ import android.widget.ListView;
 import com.adaba.R;
 
 public class GameListActivity extends Activity {
-	static final String host = "http://129.21.99.102:8080/ServerAgainstAgility/GameServlet";
+	static final String host = "http://129.21.67.213:8080/ServerAgainstAgility/GameServlet";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		List<String> games = null;
+		ArrayList<String> games = null;
 		setContentView(R.layout.activity_gamelist);
 
 		if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
 			games = savedInstanceState.getStringArrayList("GameList");
 		} else {
 			games = getUpdatedGameList();
+			if (savedInstanceState == null){
+				Log.d("HERE", "WHY?");
+			}
+			savedInstanceState.putStringArrayList("GameList", games);
 		}
 
 		// Create ListView backed by games returned from GET to server
@@ -69,13 +72,13 @@ public class GameListActivity extends Activity {
 	 * Asynchronously GET a list of games from the server
 	 * @return List<String> the updated list of games
 	 */
-	private List<String> getUpdatedGameList() {		
-		AsyncTask<Void, Void, List<String>> gamelistGetTask = new GetGameList();
+	private ArrayList<String> getUpdatedGameList() {		
+		AsyncTask<Void, Void, ArrayList<String>> gamelistGetTask = new GetGameList();
 		gamelistGetTask.execute();
 
-		List<String> games = null;
+		ArrayList<String> games = null;
 		try {
-			games = (List<String>) gamelistGetTask.get();
+			games = gamelistGetTask.get();
 		} catch (Exception e) {
 			Log.e("GameListActivity", "Exception while updating game list", e);
 		}
@@ -154,10 +157,10 @@ public class GameListActivity extends Activity {
 	/**
 	 * Asyncronous task used to get a list of games from the server 
 	 */
-	class GetGameList extends AsyncTask<Void, Void, List<String>> {
+	class GetGameList extends AsyncTask<Void, Void, ArrayList<String>> {
 		@Override
-		protected List<String> doInBackground(Void... arg0) {
-			List<String> games = new LinkedList<String>();
+		protected ArrayList<String> doInBackground(Void... arg0) {
+			ArrayList<String> games = new ArrayList<String>();
 			try {
 				Log.d("GameView", "Populating onCreate()");
 				HttpClient httpclient = new DefaultHttpClient();
