@@ -51,7 +51,7 @@ public class GameListActivity extends Activity {
 			Time old = new Time(savedInstanceState.getString("GameListTime"));
 			Time current = new Time();
 			current.setToNow();
-			if (Time.compare(old, current)>1){
+			if (Time.compare(old, current)>0){
 				Log.d("Here", "say hi");
 			}
 			games = savedInstanceState.getStringArrayList("GameList");
@@ -62,6 +62,7 @@ public class GameListActivity extends Activity {
 			}
 			Time recordedTime = new Time();
 			recordedTime.setToNow();
+			Log.d("Time", recordedTime.format2445());
 			savedInstanceState.putStringArrayList("GameList", games);
 			savedInstanceState.putString("GameListTime", recordedTime.format2445());
 		}
