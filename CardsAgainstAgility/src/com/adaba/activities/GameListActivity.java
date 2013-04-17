@@ -1,5 +1,6 @@
 package com.adaba.activities;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -29,76 +30,64 @@ import com.adaba.R;
 
 public class GameListActivity extends Activity {
 	static final String host = "http://129.21.133.101:8080/ServerAgainstAgility/GameServlet";
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_gamelist); // TODO Bill will create layout
+		ArrayList<String> games = null;
+		setContentView(R.layout.activity_gamelist);
+		
+		if (savedInstanceState.getStringArrayList("GameList")!=null){
+			games = savedInstanceState.getStringArrayList("GameList");
+		} else {
+			games = getUpdatedGameList();
+		}
+		
+		// Create ListView backed by games returned from GET to server
+		final ListView gamesView = (ListView) findViewById(R.id.gameRoomList);
+		ArrayAdapter<String> adapt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, games);
+		gamesView.setAdapter(adapt);
 
-		updateGameList();
+		gamesView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapter, View view, int itemInt, long noClue) {
+				joinGame(gamesView.getItemAtPosition(itemInt).toString());
+			}
+		});
 
 		// Set create game listenver
 		Button createGameButton = (Button) findViewById(R.id.newGameButton);
 		createGameButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				createGame();
+				createGame("Test Game Creation");
 			}
 		});
 	}
 
-	private void updateGameList() {
-		AsyncTask<Void, Void, List<String>> gamelistGetTask = new AsyncTask<Void, Void, List<String>>() {
-			@Override
-			protected List<String> doInBackground(Void... arg0) {
-				List<String> games = new LinkedList<String>();
-				try {
-					Log.d("GameView", "Populating onCreate()");
-					HttpClient httpclient = new DefaultHttpClient();
-					HttpGet httpGet = new HttpGet(host + "?req=roomlist");	
-					Log.d("GameView", "Connecting with string " + httpGet.getURI());
-					HttpResponse response = httpclient.execute(httpGet);
-					HttpEntity resEntityGet = response.getEntity();
-					if (resEntityGet != null) {
-						String respString = EntityUtils.toString(response.getEntity());
-						Log.d("Response", respString);					
-						for (String str : respString.split("\n")) games.add(str);
-					}
-				} catch (Exception e) { 
-					Log.e("GameView", e.toString()); }
-				return games;
-			}
-		};
-		gamelistGetTask.execute();
-		List<String> games;
-		try {
-			games = (List<String>) gamelistGetTask.get();
-			// Create ListView backed by games returned from GET to server
-			final ListView gamesView = (ListView) findViewById(R.id.gameRoomList);
-			ArrayAdapter<String> adapt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, games);
-			gamesView.setAdapter(adapt);
+	private ArrayList<String> getUpdatedGameList() {
+		ArrayList<String> games = null;
+		AsyncTask<Void, Void, ArrayList<String>> gamelistGetTask = new GetGameRoomList();
 
-			gamesView.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> adapter, View view, int itemInt, long noClue) {
-					joinGame(gamesView.getItemAtPosition(itemInt).toString());
-				}
-			});
+		gamelistGetTask.execute();
+		try {
+			games = (ArrayList<String>) gamelistGetTask.get();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-			Log.e("GameView", e.toString()); 
 		} catch (ExecutionException e) {
 			e.printStackTrace();
-			Log.e("GameView", e.toString()); 
-		}
+		} 
+		return games;
 	}
 
 	private void joinGame(String game) {
-		// Do POST to tell server we're joining a game
 		try {
+			// Do POST to tell server we're joining a game
 			HttpPost httpPost = new HttpPost(host);
 			httpPost.addHeader("action", "join");
 			httpPost.addHeader("game", game);
+			httpPost.addHeader("pid", Long.toString(15l)); // TODO
+			httpPost.addHeader("pname", "Putin"); // TODO
 			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 			new DefaultHttpClient().execute(httpPost); 						
 		} catch (Exception e) { Log.e("GameView", e.toString()); }
@@ -109,16 +98,16 @@ public class GameListActivity extends Activity {
 		startActivity(intent);
 	}
 
-	private void createGame() {
-		// Do POST to tell server we're joining a game
+	private void createGame(String game) {
 		try {
+			// Do POST to tell server we're creating a game
 			HttpPost httpPost = new HttpPost(host);
 			httpPost.addHeader("action", "create");
-			httpPost.addHeader("game", "New Test Game");
+			httpPost.addHeader("game", game);
 			Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 			new DefaultHttpClient().execute(httpPost);
-			updateGameList();
 		} catch (Exception e) { Log.e("GameView", e.toString()); }
+		joinGame(game);
 	}
 
 	@Override
@@ -127,4 +116,28 @@ public class GameListActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+
+	class GetGameRoomList extends AsyncTask<Void, Void, ArrayList<String>> {
+		@Override
+		protected ArrayList<String> doInBackground(Void... arg0) {
+			ArrayList<String> games = new ArrayList<String>();
+			try {
+				Log.d("GameView", "Populating onCreate()");
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpGet httpGet = new HttpGet(host + "?req=roomlist");	
+				httpGet.addHeader("req", "roomlist");
+				Log.d("GameView", "Connecting with string " + httpGet.getURI());
+				HttpResponse response = httpclient.execute(httpGet);
+				HttpEntity resEntityGet = response.getEntity();
+				if (resEntityGet != null) {
+					String respString = EntityUtils.toString(response.getEntity());
+					Log.d("Response", respString);					
+					for (String str : respString.split("\n")) games.add(str);
+				}
+			} catch (Exception e) { 
+				Log.e("GameView", e.toString()); }
+			return games;
+		}
+	};
+	
 }

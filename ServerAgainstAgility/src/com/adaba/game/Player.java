@@ -1,49 +1,15 @@
 package com.adaba.game;
 
-import java.util.HashMap;
-
-import com.adaba.cards.Card;
-import com.adaba.deck.Deck.Hand;
-
 public class Player
 {
-	private int wins;
-	private Hand hand;
+	public final long id;
 	private String name;
 
-	public Player(String name)
-	{
-		this.wins = 0;
+	public Player(long id, String name) {
+		this.id = id;
 		this.name = name;
 	}
 
-	public int getWins() {
-		return wins;
-	}
-
-	public void setWins(int wins)
-	{
-		this.wins = wins;
-	}
-
-	public Hand getHand()
-	{
-		return hand;
-	}
-
-	public Card playCard(int card)
-	{
-		return hand.getCard(card);
-	}
-
-	public Player vote(HashMap<Player,Card> nominees)
-	{
-		return (Player)nominees.keySet().toArray()[0];
-	}
-
-	public void win()
-	{
-		this.wins++;
-	}
-
+	private String getName() { return this.name; }
+	private void setName(String name) { this.name = name; }
 }
