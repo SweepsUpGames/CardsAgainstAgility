@@ -2,103 +2,75 @@ package com.adaba.game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import com.adaba.cards.BlackCard;
 import com.adaba.cards.Card;
 import com.adaba.cards.WhiteCard;
 import com.adaba.deck.Deck;
 
-public class Game 
-{
+public class Game {
+	public static final int MAX_HAND_SIZE = 7;
 	private int goal;
-	
-	private HashMap<Player,Card[]> choices;
-	private HashMap<Player,List<WhiteCard>> hands;
-	
-	protected final List<Player> players;
+
+	private Map<Player,Card[]> choices;
+	private Map<Player,List<WhiteCard>> players;
+
 	protected final Deck whiteCards;
 	protected final Deck blackCards;
-	
-	public Game(List<Player> players, Deck blackCards, Deck whiteCards)
-	{
-		this.players = players;
-		this.hands = new HashMap<Player,List<WhiteCard>>();
-		
+
+	public Game(List<Player> players, Deck blackCards, Deck whiteCards) {
+		this.players = new HashMap<Player,List<WhiteCard>>();
+
 		this.blackCards = blackCards;
 		this.whiteCards = whiteCards;
 	}
-	
-	public void addPlayer(Player player) 
-	{
-		players.add(player);
+
+	public void addPlayer(Player player) {
+		players.put(player, new LinkedList<WhiteCard>());
 	}
-	
-	public void startGame()
-	{
-		for(int i = 0; i < players.size(); i++)
-		{
-			int j = 7;
-			List<WhiteCard> tmp = new ArrayList<WhiteCard>();
-			while(j != 0)
-			{
-				tmp.add((WhiteCard)whiteCards.drawCard());
-				j--;
-			}
-			hands.put(players.get(i), tmp);
+
+	public List<WhiteCard> getPlayerHand(String pid) {
+		for (Player player : players.keySet()) if (player.id.equals(pid)) {
+			return players.get(player);
+		}
+		throw new IllegalArgumentException("Passed unknown pid");
+	}
+
+	/**
+	 * Each player draws cards from the Deck up to MAX_HAND_SIZE
+	 */
+	public void drawHands() {
+		for (Player player : players.keySet()) {			
+			List<WhiteCard> hand = new ArrayList<WhiteCard>();
+			while(hand.size() < MAX_HAND_SIZE) hand.add((WhiteCard)whiteCards.drawCard());
+			players.put(player, hand);
 		}
 	}
-	
-	public void startTurn()
-	{
-		this.choices = new HashMap<Player,Card[]>();
-		for(int i = 0; i < players.size(); i++)
-		{
-			List<WhiteCard> tmp = hands.get(players.get(i));
-			tmp.add((WhiteCard)whiteCards.drawCard());
-			hands.put(players.get(i), tmp);
-		}
-	}
-	
-	public boolean playCard(Player player, WhiteCard card)
-	{
-		if(!choices.containsKey(player))
-		{
+
+	public boolean playCard(String pid, WhiteCard card) {
+		Player player = null;
+		for (Player _player : players.keySet()) if (player.id.equals(pid)) player = _player;
+		if (player == null) throw new IllegalArgumentException("Passed unknown pid");
+
+		if(!choices.containsKey(player)) {
 			Card[] tmp = {card};
 			choices.put(player, tmp);
 		}
-		
-		if(choices.keySet().size() == players.size() - 1)
-		{
-			return true;
-		}
-		
-		else
-		{
-			return false;
-		}
+
+		return (choices.keySet().size() == players.size() - 1); 
 	}
-	
-	public boolean playCard(Player player, WhiteCard[] cards)
-	{
-		if(!choices.containsKey(player))
-		{
+
+	public boolean playCard(Player player, WhiteCard[] cards) {
+		if(!choices.containsKey(player)) {
 			choices.put(player,cards);
 		}
-		
-		if(choices.keySet().size() == players.size() - 1)
-		{
-			return true;
-		}
-		
-		else
-		{
-			return false;
-		}
+
+		return (choices.keySet().size() == players.size() - 1);
 	}
-	
-	public HashMap<Player,Card[]> getChoices()
-	{
+
+	public Map<Player,Card[]> getChoices() {
 		return this.choices;
 	}
 }

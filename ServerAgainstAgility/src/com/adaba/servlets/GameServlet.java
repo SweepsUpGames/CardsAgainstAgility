@@ -18,6 +18,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.adaba.cards.Card;
 import com.adaba.cards.Type;
 import com.adaba.deck.Deck;
 import com.adaba.deck.DeckCreator;
@@ -55,9 +56,9 @@ public class GameServlet extends HttpServlet {
 			logger.error("Exception while reading card resource", e);
 		}
 		List<Player> players = new LinkedList<Player>();
-		players.add(new Player(6l, "Todd"));
-		players.add(new Player(7l, "Jeff"));
-		players.add(new Player(8l, "Kim"));
+		players.add(new Player(Long.toString(6l), "Todd"));
+		players.add(new Player(Long.toString(7l), "Jeff"));
+		players.add(new Player(Long.toString(8l), "Kim"));
 		games.put("TestGame w/ 3 players", new Game(players, whiteDeck, blackDeck));
 
 		try {
@@ -67,11 +68,11 @@ public class GameServlet extends HttpServlet {
 			logger.error("Exception while reading card resource", e);
 		}
 		players = new LinkedList<Player>();
-		players.add(new Player(1l, "Bill"));
-		players.add(new Player(2l, "Drew"));
-		players.add(new Player(3l, "Adam"));
-		players.add(new Player(4l, "Mark"));
-		players.add(new Player(5l, "Phil"));
+		players.add(new Player(Long.toString(1l), "Bill"));
+		players.add(new Player(Long.toString(2l), "Drew"));
+		players.add(new Player(Long.toString(3l), "Adam"));
+		players.add(new Player(Long.toString(4l), "Mark"));
+		players.add(new Player(Long.toString(5l), "Phil"));
 		games.put("TestGame w/ 5 players", new Game(players, whiteDeck, blackDeck));
 
 		try {
@@ -110,9 +111,8 @@ public class GameServlet extends HttpServlet {
 		} else if (req.equalsIgnoreCase("hand")) {
 			logger.info("GET received for hand.");
 			Game game = games.get(request.getParameter("game"));
-
-			// TODO
-			response.getWriter().append("Card Hotel\n");
+			String pid = request.getParameter("pid");
+			for (Card card : game.getPlayerHand(pid)) response.getWriter().append(card + "\n");
 		} 
 	}
 
@@ -129,7 +129,7 @@ public class GameServlet extends HttpServlet {
 			if (game != null) {
 				logger.info("POST received for joining game " + game);
 				if (games.get(game) != null) {
-					long pid = Long.parseLong(request.getHeader("pid"));
+					String pid = request.getHeader("pid");
 					String pname = request.getHeader("pname");
 					games.get(game).addPlayer(new Player(pid, pname));
 				}
