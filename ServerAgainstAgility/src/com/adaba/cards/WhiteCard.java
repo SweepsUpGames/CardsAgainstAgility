@@ -8,8 +8,5 @@ public class WhiteCard implements Card {
 	}
 
 	public String getText() { return this.text; }
-
-
-	public String toString() { return String.format("%s ", this.text); }
-
+	public String toString() { return String.format("%s", this.text); }
 }
