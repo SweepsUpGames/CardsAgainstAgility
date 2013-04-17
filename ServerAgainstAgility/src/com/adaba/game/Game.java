@@ -11,10 +11,9 @@ import com.adaba.deck.Deck;
 
 public class Game 
 {
-	private Player winner;
 	private int goal;
 	
-	private HashMap<Player,Card> choices;
+	private HashMap<Player,Card[]> choices;
 	private HashMap<Player,List<WhiteCard>> hands;
 	
 	protected final List<Player> players;
@@ -24,6 +23,8 @@ public class Game
 	public Game(List<Player> players, Deck blackCards, Deck whiteCards)
 	{
 		this.players = players;
+		this.hands = new HashMap<Player,List<WhiteCard>>();
+		
 		this.blackCards = blackCards;
 		this.whiteCards = whiteCards;
 	}
@@ -35,12 +36,22 @@ public class Game
 	
 	public void startGame()
 	{
-		//Start the game
+		for(int i = 0; i < players.size(); i++)
+		{
+			int j = 7;
+			List<WhiteCard> tmp = new ArrayList<WhiteCard>();
+			while(j != 0)
+			{
+				tmp.add((WhiteCard)whiteCards.drawCard());
+				j--;
+			}
+			hands.put(players.get(i), tmp);
+		}
 	}
 	
 	public void startTurn()
 	{
-		this.choices = new HashMap<Player,Card>();
+		this.choices = new HashMap<Player,Card[]>();
 		for(int i = 0; i < players.size(); i++)
 		{
 			List<WhiteCard> tmp = hands.get(players.get(i));
@@ -53,48 +64,41 @@ public class Game
 	{
 		if(!choices.containsKey(player))
 		{
-			choices.put(player, card);
+			Card[] tmp = {card};
+			choices.put(player, tmp);
 		}
 		
 		if(choices.keySet().size() == players.size() - 1)
 		{
 			return true;
 		}
+		
 		else
 		{
 			return false;
 		}
 	}
 	
-	/*
-	public Game(List<Player> players, Deck blackCards, Deck whiteCards)
+	public boolean playCard(Player player, WhiteCard[] cards)
 	{
-		this.goal = 10;
-		this.players = players;
-		this.whiteCards = whiteCards;
-		this.blackCards = blackCards;
-		
-		this.turns = new ArrayList<Turn>();
-		this.winner = null;
-		
-		while(this.winner == null)
+		if(!choices.containsKey(player))
 		{
-			for(int i = 0; i < players.size(); i++)
-			{
-				players.get(i).getHand().addCard((WhiteCard)whiteCards.drawCard());
-			}
-			
-			Turn tmp = new Turn((BlackCard)blackCards.drawCard(), this.players, (this.turns.size() % this.players.size()));
-			this.turns.add(tmp);
-			
-			for(int i = 0; i < players.size(); i++)
-			{
-				if(players.get(i).getWins() == this.goal)
-				{
-					this.winner = players.get(i);
-				}
-			}
+			choices.put(player,cards);
+		}
+		
+		if(choices.keySet().size() == players.size() - 1)
+		{
+			return true;
+		}
+		
+		else
+		{
+			return false;
 		}
 	}
-	*/
+	
+	public HashMap<Player,Card[]> getChoices()
+	{
+		return this.choices;
+	}
 }
