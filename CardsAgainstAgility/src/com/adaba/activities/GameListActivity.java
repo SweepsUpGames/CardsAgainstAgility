@@ -19,6 +19,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -46,15 +47,24 @@ public class GameListActivity extends Activity {
 			Log.e("PlayerViewActivity", "Error reading host IP from properties", e);
 		}
 
-		//if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
-		//	games = savedInstanceState.getStringArrayList("GameList");
-		//} else {
+		if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
+			Time old = new Time(savedInstanceState.getString("GameListTime"));
+			Time current = new Time();
+			current.setToNow();
+			if (Time.compare(old, current)>1){
+				Log.d("Here", "say hi");
+			}
+			games = savedInstanceState.getStringArrayList("GameList");
+		} else {
 			games = getUpdatedGameList();
-		//	if (savedInstanceState == null){
-		//		savedInstanceState = new Bundle();
-		//	}
-		//	savedInstanceState.putStringArrayList("GameList", games);
-		//}
+			if (savedInstanceState == null){
+				savedInstanceState = new Bundle();
+			}
+			Time recordedTime = new Time();
+			recordedTime.setToNow();
+			savedInstanceState.putStringArrayList("GameList", games);
+			savedInstanceState.putString("GameListTime", recordedTime.format2445());
+		}
 
 		// Create ListView backed by games returned from GET to server
 		final ListView gamesView = (ListView) findViewById(R.id.gameRoomList);
