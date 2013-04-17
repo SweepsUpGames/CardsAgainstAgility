@@ -1,5 +1,6 @@
 package com.adaba.activities;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -31,14 +32,13 @@ import com.adaba.R;
 
 public class GameListActivity extends Activity {
 	static final String servletURI = "/GameServlet";
-
 	protected Properties props = new Properties();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ArrayList<String> games = null;
 		setContentView(R.layout.activity_gamelist);
-
 		try {
 			// Load properties file
 			props.load(getResources().openRawResource(R.raw.system));
@@ -46,12 +46,15 @@ public class GameListActivity extends Activity {
 			Log.e("PlayerViewActivity", "Error reading host IP from properties", e);
 		}
 
-		List<String> games = null;
-		if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
-			games = savedInstanceState.getStringArrayList("GameList");
-		} else {
+		//if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
+		//	games = savedInstanceState.getStringArrayList("GameList");
+		//} else {
 			games = getUpdatedGameList();
-		}
+		//	if (savedInstanceState == null){
+		//		savedInstanceState = new Bundle();
+		//	}
+		//	savedInstanceState.putStringArrayList("GameList", games);
+		//}
 
 		// Create ListView backed by games returned from GET to server
 		final ListView gamesView = (ListView) findViewById(R.id.gameRoomList);
@@ -73,19 +76,20 @@ public class GameListActivity extends Activity {
 				createGame("Test Game Creation");
 			}
 		});
+		Log.d("here","onCreate done");
 	}
 
 	/**
 	 * Asynchronously GET a list of games from the server
 	 * @return List<String> the updated list of games
 	 */
-	private List<String> getUpdatedGameList() {		
-		AsyncTask<Void, Void, List<String>> gamelistGetTask = new GetGameList();
+	private ArrayList<String> getUpdatedGameList() {		
+		AsyncTask<Void, Void, ArrayList<String>> gamelistGetTask = new GetGameList();
 		gamelistGetTask.execute();
 
-		List<String> games = null;
+		ArrayList<String> games = null;
 		try {
-			games = (List<String>) gamelistGetTask.get();
+			games = gamelistGetTask.get();
 		} catch (Exception e) {
 			Log.e("GameListActivity", "Exception while updating game list", e);
 		}
@@ -164,10 +168,10 @@ public class GameListActivity extends Activity {
 	/**
 	 * Asyncronous task used to get a list of games from the server 
 	 */
-	class GetGameList extends AsyncTask<Void, Void, List<String>> {
+	class GetGameList extends AsyncTask<Void, Void, ArrayList<String>> {
 		@Override
-		protected List<String> doInBackground(Void... arg0) {
-			List<String> games = new LinkedList<String>();
+		protected ArrayList<String> doInBackground(Void... arg0) {
+			ArrayList<String> games = new ArrayList<String>();
 			try {
 				Log.d("GameView", "Populating onCreate()");
 				HttpClient httpclient = new DefaultHttpClient();
@@ -180,7 +184,7 @@ public class GameListActivity extends Activity {
 					String respString = EntityUtils.toString(response.getEntity());
 					Log.d("Response", respString);					
 					for (String str : respString.split("\n")) games.add(str);
-				}
+				} 
 			} catch (Exception e) { 
 				Log.e("GameView", e.toString()); }
 			return games;
