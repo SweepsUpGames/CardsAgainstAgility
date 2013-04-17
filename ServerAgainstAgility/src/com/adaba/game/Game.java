@@ -51,12 +51,12 @@ public class Game {
 		}
 	}
 
-	public boolean playCard(String pid, WhiteCard card) {
+	public boolean playCard(String pid, int card) {
 		Player player = null;
 		for (Player _player : players.keySet()) if (player.id.equals(pid)) player = _player;
 		if (player == null) throw new IllegalArgumentException("Passed unknown pid");
 
-		if(!choices.containsKey(player)) choices.put(player, card);
+		if(!choices.containsKey(player)) choices.put(player, getPlayerHand(player.id).get(card));
 
 		return (choices.keySet().size() == players.size() - 1); 
 	}

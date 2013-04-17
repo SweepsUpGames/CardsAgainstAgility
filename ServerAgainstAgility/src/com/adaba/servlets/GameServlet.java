@@ -106,20 +106,24 @@ public class GameServlet extends HttpServlet {
 		}
 
 		String req = request.getHeader("req"); // What do we want to get?
-		if (req == null) {			
+		if (req == null) {
 		} else if (req.equalsIgnoreCase("roomlist")) {
+			// Retrieve list of games
 			logger.info("GET received for gameroom list.");
 			for (String game : games.keySet()) response.getWriter().append(String.format("%s\n", game));
 		} else if (req.equalsIgnoreCase("hand")) {
+			// Retrieve a player's hand
 			logger.info("GET received for hand.");
 			Game game = games.get(request.getParameter("game"));
 			String pid = request.getParameter("pid");
 			for (Card card : game.getPlayerHand(pid)) response.getWriter().append(String.format("%s\n", card.getText()));
 		} else if (req.equalsIgnoreCase("tsarcard")) {
+			// Retrieve a certain game's current tsar card
 			logger.info("GET received for tsar card.");
 			Game game = games.get(request.getParameter("game"));			
 			response.getWriter().append(String.format("%s\n", game.getCurrentTsarCard().getText()));
 		} else if (req.equalsIgnoreCase("selected")) {
+			// Retrieve the cards that have been played in the current turn of a certain game
 			logger.info("GET received for selected cards.");
 			Game game = games.get(request.getParameter("game"));
 			for (Card card : game.getChoices().values()) response.getWriter().append(String.format("%s\n", card.getText()));
@@ -166,9 +170,22 @@ public class GameServlet extends HttpServlet {
 				logger.info("POST received for starting game " + game);
 			}
 		} else if (action.equalsIgnoreCase("play")) {
-			String card = request.getHeader("card"); // What do we want to get?
-			if (card != null) {
-				logger.info("POST received for playing card " + card);
+			String game = request.getHeader("game");
+			if (game != null) {
+				if (games.get(game) != null) {
+					String pid = request.getHeader("pid");
+					int card = Integer.parseInt(request.getHeader("card"));
+					logger.info("POST received for playing card {} from player {} in game {}", card, pid, game);
+					games.get(game).playCard(pid, card);
+				}
+			}
+		} else if (action.equalsIgnoreCase("judge")) {
+			// TODO
+			String game = request.getHeader("game");
+			if (game != null) {
+				if (games.get(game) != null) {
+					logger.info("POST received for judging");
+				}
 			}
 		}
 	}
