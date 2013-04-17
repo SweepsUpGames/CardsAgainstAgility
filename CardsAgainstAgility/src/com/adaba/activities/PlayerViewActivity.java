@@ -2,6 +2,7 @@ package com.adaba.activities;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpEntity;
@@ -25,18 +26,27 @@ import android.widget.TextView;
 import com.adaba.R;
 
 public class PlayerViewActivity extends Activity {
-	static final String host = "http://129.21.99.102:8080/ServerAgainstAgility/GameServlet";
+	static final String servletURI = "/GameServlet";
 
 	protected String game;
+	protected Properties props = new Properties();
 
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+
+		try {
+			// Load properties file
+			props.load(getResources().openRawResource(R.raw.system));
+		} catch (Exception e) {
+			Log.e("PlayerViewActivity", "Error reading host IP from properties", e);
+		}
+
 		setContentView(R.layout.activity_view_player);
 
 		game = this.getIntent().getStringExtra("game");
 		TextView gameName = (TextView) findViewById(R.id.gameName);
 		gameName.setText(game);
-		
+
 		AsyncTask<Void, Void, List<String>> cardlistGetTask = new GetPlayerViewData();
 		cardlistGetTask.execute();
 		List<String> games;
@@ -64,14 +74,14 @@ public class PlayerViewActivity extends Activity {
 
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-	  super.onSaveInstanceState(savedInstanceState);
-	  // Save UI state changes to the savedInstanceState.
-	  // This bundle will be passed to onCreate if the process is
-	  // killed and restarted.
-	  savedInstanceState.putBoolean("MyBoolean", true);
+		super.onSaveInstanceState(savedInstanceState);
+		// Save UI state changes to the savedInstanceState.
+		// This bundle will be passed to onCreate if the process is
+		// killed and restarted.
+		savedInstanceState.putBoolean("MyBoolean", true);
 
 	}
-	
+
 	class GetPlayerViewData extends AsyncTask<Void, Void, List<String>> {
 		@Override
 		protected List<String> doInBackground(Void... arg0) {
@@ -79,7 +89,7 @@ public class PlayerViewActivity extends Activity {
 			try {
 				Log.d("PlayerView", "Populating onCreate()");
 				HttpClient httpclient = new DefaultHttpClient();
-				HttpGet httpGet = new HttpGet(host);
+				HttpGet httpGet = new HttpGet(props.getProperty("host") + servletURI);
 				httpGet.addHeader("req", "hand");
 				httpGet.addHeader("game", game);
 				httpGet.addHeader("player", "Yossarian");
@@ -96,5 +106,5 @@ public class PlayerViewActivity extends Activity {
 			return cards;
 		}
 	};
-	
+
 }

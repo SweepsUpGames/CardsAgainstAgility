@@ -2,6 +2,7 @@ package com.adaba.activities;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
 
 import org.apache.http.HttpEntity;
@@ -29,14 +30,23 @@ import android.widget.ListView;
 import com.adaba.R;
 
 public class GameListActivity extends Activity {
-	static final String host = "http://129.21.99.102:8080/ServerAgainstAgility/GameServlet";
+	static final String servletURI = "/GameServlet";
+
+	protected Properties props = new Properties();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		List<String> games = null;
 		setContentView(R.layout.activity_gamelist);
 
+		try {
+			// Load properties file
+			props.load(getResources().openRawResource(R.raw.system));
+		} catch (Exception e) {
+			Log.e("PlayerViewActivity", "Error reading host IP from properties", e);
+		}
+
+		List<String> games = null;
 		if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
 			games = savedInstanceState.getStringArrayList("GameList");
 		} else {
@@ -93,7 +103,7 @@ public class GameListActivity extends Activity {
 			protected Void doInBackground(Void... arg0) {
 				try {
 					// Do POST to tell server we're joining a game
-					HttpPost httpPost = new HttpPost(host);
+					HttpPost httpPost = new HttpPost(props.getProperty("host") + servletURI);
 					httpPost.addHeader("action", "join");
 					httpPost.addHeader("game", game);
 					httpPost.addHeader("pid", getPID());
@@ -116,7 +126,7 @@ public class GameListActivity extends Activity {
 			protected Void doInBackground(Void... arg0) {
 				try {
 					// Do POST to tell server we're creating a game
-					HttpPost httpPost = new HttpPost(host);
+					HttpPost httpPost = new HttpPost(props.getProperty("host") + servletURI);
 					httpPost.addHeader("action", "create");
 					httpPost.addHeader("game", game);
 					Log.d("GameView", "Sending POST with string " + httpPost.getURI());
@@ -161,7 +171,7 @@ public class GameListActivity extends Activity {
 			try {
 				Log.d("GameView", "Populating onCreate()");
 				HttpClient httpclient = new DefaultHttpClient();
-				HttpGet httpGet = new HttpGet(host + "?req=roomlist");	
+				HttpGet httpGet = new HttpGet(props.getProperty("host") + servletURI);	
 				httpGet.addHeader("req", "roomlist");
 				Log.d("GameView", "Connecting with string " + httpGet.getURI());
 				HttpResponse response = httpclient.execute(httpGet);
