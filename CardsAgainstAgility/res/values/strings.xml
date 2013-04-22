@@ -9,5 +9,7 @@
     <string name="join_selected_game">Join the selected game.</string>
     <color name="DK_GREY">#41383C</color>
     <string name="game_room">Click on a game room to join a game</string>
+    <string name="start_game">Start Game</string>
+    <string name="game_room_number">Gameroom: </string>
 
 </resources>
