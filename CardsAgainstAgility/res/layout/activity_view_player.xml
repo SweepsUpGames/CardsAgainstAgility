@@ -24,7 +24,7 @@
         <requestFocus />
     </TextView>
 
-    <EditText
+    <TextView
         android:id="@+id/editText1"
         android:layout_width="match_parent"
         android:layout_height="88dp"
@@ -37,11 +37,11 @@
         android:focusableInTouchMode="false"
         android:linksClickable="false"
         android:singleLine="true"
-        android:text="Black Card"
+        android:text="@string/black_card"
         android:textColor="#F0F0F0" >
 
         <requestFocus />
-    </EditText>
+    </TextView>
 
     <ListView
         android:id="@+id/handList"
@@ -60,6 +60,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:text="Confirm Selection" />
+        android:text="@string/confirm" />
 
 </RelativeLayout>

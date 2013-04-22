@@ -32,6 +32,7 @@ import com.adaba.R;
 public class GameListActivity extends Activity {
 	static final String servletURI = "/GameServlet";
 	protected Properties props = new Properties();
+	private String playerName = "Putin"; //TODO move to a properties lookup
 	private Time lastServerCall;
 	private ArrayList<String> games;
 
@@ -50,11 +51,16 @@ public class GameListActivity extends Activity {
 			Time old = new Time();
 			old.parse(savedInstanceState.getString("GameListTime"));
 			Time current = new Time();
-			Log.d("Time", "old "+old.format2445());
 			current.setToNow();
+			Log.d("Time", "old "+old.format2445());
 			Log.d("Time", "current "+current.format2445());
-			if (Time.compare(old, current)>0){
+			Log.d("Time", "diff "+Time.compare(old, current));
+
+			if (Time.compare(old, current)<-10){
 				Log.d("Time", "True");
+				lastServerCall = current;
+			} else {
+				lastServerCall = old;
 			}
 			games = savedInstanceState.getStringArrayList("GameList");
 		} else {
@@ -97,7 +103,7 @@ public class GameListActivity extends Activity {
 			savedInstanceState.putStringArrayList("GameList", games);
 		}
 		if (lastServerCall!= null){
-		savedInstanceState.putString("GameListTime", lastServerCall.format2445());
+			savedInstanceState.putString("GameListTime", lastServerCall.format2445());
 		}
 	}
 
@@ -134,7 +140,7 @@ public class GameListActivity extends Activity {
 					httpPost.addHeader("action", "join");
 					httpPost.addHeader("game", args[0]);
 					httpPost.addHeader("pid", getPID());
-					httpPost.addHeader("pname", "Putin"); // TODO
+					httpPost.addHeader("pname", playerName); // TODO
 					Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 					new DefaultHttpClient().execute(httpPost); 						
 				} catch (Exception e) { Log.e("GameView", e.toString()); }

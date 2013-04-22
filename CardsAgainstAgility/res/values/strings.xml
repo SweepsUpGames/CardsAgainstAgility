@@ -11,5 +11,7 @@
     <string name="game_room">Click on a game room to join a game</string>
     <string name="start_game">Start Game</string>
     <string name="game_room_number">Gameroom: </string>
+    <string name="confirm">Confirm Selection</string>
+    <string name="black_card">Black Card</string>
 
 </resources>
