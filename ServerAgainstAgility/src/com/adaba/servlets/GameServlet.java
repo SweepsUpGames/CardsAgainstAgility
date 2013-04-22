@@ -116,8 +116,8 @@ public class GameServlet extends HttpServlet {
 			}
 		} else if (req.equalsIgnoreCase("players")) {
 			// Retrieve list of games
-			logger.info("GET received for player list for game {}.", request.getParameter("game"));
-			Game game = games.get(request.getParameter("game"));
+			logger.info("GET received for player list for game {}.", request.getHeader("game"));
+			Game game = games.get(request.getHeader("game"));
 			for (Player player : game.getPlayers()) {
 				response.getWriter().append(String.format("%s", player.getName()));
 				if (player.isHost()) response.getWriter().append(String.format(", %s", "HOST"));
@@ -125,23 +125,23 @@ public class GameServlet extends HttpServlet {
 			}
 		} else if (req.equalsIgnoreCase("hand")) {
 			// Retrieve a player's hand
-			logger.info("GET received for hand with parameters game: {}, player: {}", request.getParameter("game"), request.getParameter("pid"));
-			Game game = games.get(request.getParameter("game"));
-			String pid = request.getParameter("pid");
+			logger.info("GET received for hand with parameters game: {}, player: {}", request.getHeader("game"), request.getHeader("pid"));
+			Game game = games.get(request.getHeader("game"));
+			String pid = request.getHeader("pid");
 			for (Card card : game.getPlayerHand(pid)) {
 				response.getWriter().append(String.format("%s\n", card.getText()));
 				logger.debug("Data written to GET: {}", card.getText());
 			}
 		} else if (req.equalsIgnoreCase("tsarcard")) {
 			// Retrieve a certain game's current tsar card
-			logger.info("GET received for tsar card with parameters game: {}", request.getParameter("game"));
-			Game game = games.get(request.getParameter("game"));			
+			logger.info("GET received for tsar card with parameters game: {}", request.getHeader("game"));
+			Game game = games.get(request.getHeader("game"));			
 			response.getWriter().append(String.format("%s\n", game.getCurrentTsarCard().getText()));
 			logger.debug("Data written to GET: {}", game.getCurrentTsarCard().getText());
 		} else if (req.equalsIgnoreCase("selected")) {
 			// Retrieve the cards that have been played in the current turn of a certain game
-			logger.info("GET received for selected cards with parameters game: {}", request.getParameter("game"));
-			Game game = games.get(request.getParameter("game"));
+			logger.info("GET received for selected cards with parameters game: {}", request.getHeader("game"));
+			Game game = games.get(request.getHeader("game"));
 			for (Card card : game.getChoices().values()) {
 				response.getWriter().append(String.format("%s\n", card.getText()));
 				logger.debug("Data written to GET: {}", card.getText());
