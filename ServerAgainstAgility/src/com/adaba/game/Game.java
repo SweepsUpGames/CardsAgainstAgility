@@ -1,6 +1,5 @@
 package com.adaba.game;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,12 +12,19 @@ import com.adaba.deck.Deck;
 
 public class Game {
 	public static final int MAX_HAND_SIZE = 7;
-	private int goal;
 
+	/**
+	 * Represents the selections Players have made for a given round.
+	 * Number of entries should be fewer than the number of players - 1.
+	 */
 	private Map<Player,Card> choices;
-	private Map<Player,List<WhiteCard>> players;
-	private BlackCard tsarCard;
 
+	/**
+	 * Represents the hands held by Players
+	 */
+	private Map<Player,List<WhiteCard>> players;
+
+	private BlackCard tsarCard;
 	protected final Deck<WhiteCard> whiteCards;
 	protected final Deck<BlackCard> blackCards;
 
@@ -28,58 +34,94 @@ public class Game {
 		this.blackCards = blackCards;
 		this.whiteCards = whiteCards;
 	}
-	
-	public List<Player> getPlayers() { return (List<Player>) this.players.keySet(); }
 
-	public void addPlayer(Player player) {
-		players.put(player, new LinkedList<WhiteCard>());
-	}
+	/**
+	 * Get a list of Players in the current game
+	 * @return players List<Player>
+	 */
+	public List<Player> getPlayers() { return new LinkedList<Player>(this.players.keySet()); }
 
-	public List<WhiteCard> getPlayerHand(String pid) {
-		for (Player player : players.keySet()) if (player.id.equals(pid)) {
-			return players.get(player);
+	/**
+	 * Add a Player to the current game.
+	 * Note: the Player is given a hand that contains no cards.
+	 * @param player Player
+	 */
+	public void addPlayer(Player player) { players.put(player, new LinkedList<WhiteCard>()); }
+
+	/**
+	 * Returns the player corresponding to the passed pid 
+	 * 
+	 * @param pid String id representing a Player
+	 * @return player Player
+	 * @exception IllegalArgumentException if invalid pid passed
+	 */
+	public Player getPlayer(String pid) {
+		for (Player player : players.keySet()) { 
+			if (player.id.equals(pid)) return player;
 		}
 		throw new IllegalArgumentException("Passed unknown pid");
 	}
 
 	/**
-	 * Each player draws cards from the Deck up to MAX_HAND_SIZE
+	 * Returns the list of WhiteCards representing the hand held by a 
+	 * Player in this game. 
+	 * 
+	 * @param pid String id representing a Player
+	 * @return hand List<WhiteCard>
+	 * @exception IllegalArgumentException if invalid pid passed
+	 */
+	public List<WhiteCard> getPlayerHand(String pid) { return players.get(getPlayer(pid)); }
+
+	/**
+	 * Iterates through each entry in players, adding cards to the hand held 
+	 * by each player until each player's hand contains MAX_HAND_SIZE cards.  
 	 */
 	public void drawHands() {
-		for (Player player : players.keySet()) {			
-			List<WhiteCard> hand = new ArrayList<WhiteCard>();
-			while(hand.size() < MAX_HAND_SIZE) hand.add((WhiteCard)whiteCards.drawCard());
-			players.put(player, hand);
+		for (Map.Entry<Player, List<WhiteCard>> entry : players.entrySet()) {
+			while (entry.getValue().size() < MAX_HAND_SIZE) entry.getValue().add((WhiteCard)whiteCards.drawCard());
 		}
 	}
 
-	public boolean playCard(String pid, int card) {
-		Player player = null;
-		for (Player _player : players.keySet()) if (player.id.equals(pid)) player = _player;
-		if (player == null) throw new IllegalArgumentException("Passed unknown pid");
+	/**
+	 * Get the current Tsar card
+	 * 
+	 * @return tsar card BlackCard
+	 */
+	public BlackCard getCurrentTsarCard() { return this.tsarCard; }
 
-		if(!choices.containsKey(player)) choices.put(player, getPlayerHand(player.id).get(card));
+	/**
+	 * Remove a BlackCard from the deck and make it the new Tsar card
+	 * 
+	 * @return tsar card BlackCard
+	 */
+	public BlackCard drawNextTsarCard() { 
+		this.tsarCard = this.blackCards.drawCard();
+		return getCurrentTsarCard();
+	}
 
+	/**
+	 * Selects a Card held by a Player to be their choice for this round.
+	 * 
+	 * @param pid String id representing a Player
+	 * @param card int representing a card in a Player's hand
+	 * @return boolean have all Players selected a card to play?
+	 * @exception IllegalArgumentException if invalid pid passed
+	 */
+	public boolean selectCard(String pid, int card) {
+		// Retrieve player; unchecked exception if player does not exist
+		Player player = getPlayer(pid);
+
+		// Add/replace player's choice with a card from their hand
+		choices.put(player, getPlayerHand(player.id).get(card));
+
+		// Return true if all players have made a selection
 		return (choices.keySet().size() == players.size() - 1); 
 	}
 
-	//	public boolean playCard(Player player, WhiteCard[] cards) {
-	//		if(!choices.containsKey(player)) {
-	//			choices.put(player,cards);
-	//		}
-	//
-	//		return (choices.keySet().size() == players.size() - 1);
-	//	}
-
-	public Map<Player,Card> getChoices() {
-		return this.choices;
-	}
-
-	public Card getCurrentTsarCard() {
-		return this.tsarCard;
-	}
-
-	public void drawNextTsarCard() {
-		this.tsarCard = this.blackCards.drawCard();
-	}
+	/**
+	 * Returns a Map from Players to Cards indicating this round's selections 
+	 * 
+	 * @return choices Map<Player,Card> indicating the cards players have chosen for this round
+	 */
+	public Map<Player,Card> getChoices() { return this.choices; }	
 }
