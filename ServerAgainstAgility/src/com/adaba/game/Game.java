@@ -28,6 +28,8 @@ public class Game {
 		this.blackCards = blackCards;
 		this.whiteCards = whiteCards;
 	}
+	
+	public List<Player> getPlayers() { return (List<Player>) this.players.keySet(); }
 
 	public void addPlayer(Player player) {
 		players.put(player, new LinkedList<WhiteCard>());
