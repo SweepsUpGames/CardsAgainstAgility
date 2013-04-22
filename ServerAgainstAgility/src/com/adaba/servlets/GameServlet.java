@@ -195,7 +195,7 @@ public class GameServlet extends HttpServlet {
 					String pid = request.getHeader("pid");
 					int card = Integer.parseInt(request.getHeader("card"));
 					logger.info("POST received for playing card {} from player {} in game {}", card, pid, game);
-					games.get(game).playCard(pid, card);
+					games.get(game).selectCard(pid, card);
 				}
 			}
 		} else if (action.equalsIgnoreCase("judge")) {
