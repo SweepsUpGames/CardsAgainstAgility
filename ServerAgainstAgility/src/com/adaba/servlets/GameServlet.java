@@ -118,7 +118,11 @@ public class GameServlet extends HttpServlet {
 			// Retrieve list of games
 			logger.info("GET received for player list for game {}.", request.getParameter("game"));
 			Game game = games.get(request.getParameter("game"));
-			for (Player player : game.getPlayers()) response.getWriter().append(String.format("%s\n", player.getName()));
+			for (Player player : game.getPlayers()) {
+				response.getWriter().append(String.format("%s", player.getName()));
+				if (player.isHost()) response.getWriter().append(String.format(", %s", "HOST"));
+				if (player.isTsar()) response.getWriter().append(String.format(", %s", "TSAR"));
+			}
 		} else if (req.equalsIgnoreCase("hand")) {
 			// Retrieve a player's hand
 			logger.info("GET received for hand with parameters game: {}, player: {}", request.getParameter("game"), request.getParameter("pid"));
