@@ -53,11 +53,8 @@ public class DeckCreator {
 				break;
 			} else {									
 				if (type == Type.BLACK) {
-					String[] lineSplit = line.split("\\|");
-					String cardText = lineSplit[0];
-					assert(lineSplit.length > 1);
-					int blanks = Integer.parseInt(lineSplit[1]);
-					cardlist.add(new BlackCard(cardText, blanks));
+					// TODO we are assuming now that black cards only have 1 blank
+					cardlist.add(new BlackCard(line, 1)); 
 				} else if (type == Type.WHITE) {
 					cardlist.add(new WhiteCard(line));
 				}

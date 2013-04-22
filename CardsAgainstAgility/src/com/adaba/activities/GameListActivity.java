@@ -75,6 +75,7 @@ public class GameListActivity extends Activity {
 		gamesView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapter, View view, int itemInt, long noClue) {
+				Log.d("GameListActivity", "User clicked game " + gamesView.getItemAtPosition(itemInt) + " in listview");
 				joinGame(gamesView.getItemAtPosition(itemInt).toString());
 			}
 		});
@@ -111,6 +112,7 @@ public class GameListActivity extends Activity {
 		ArrayList<String> games = null;
 		try {
 			games = gamelistGetTask.get();
+			Log.d("GameListActivity", "GET fired to update game list");
 		} catch (Exception e) {
 			Log.e("GameListActivity", "Exception while updating game list", e);
 		}
@@ -121,16 +123,16 @@ public class GameListActivity extends Activity {
 	 * Asynchronously POST to the server to join a game
 	 * @param game String name of the game to join
 	 */
-	private void joinGame(final String game) {
+	private void joinGame(String game) {
 		// lol
-		AsyncTask<Void, Void, Void> joinPostTask = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<String, Void, Void> joinPostTask = new AsyncTask<String, Void, Void>() {
 			@Override
-			protected Void doInBackground(Void... arg0) {
+			protected Void doInBackground(String... args) {
 				try {
 					// Do POST to tell server we're joining a game
 					HttpPost httpPost = new HttpPost(props.getProperty("host") + servletURI);
 					httpPost.addHeader("action", "join");
-					httpPost.addHeader("game", game);
+					httpPost.addHeader("game", args[0]);
 					httpPost.addHeader("pid", getPID());
 					httpPost.addHeader("pname", "Putin"); // TODO
 					Log.d("GameView", "Sending POST with string " + httpPost.getURI());
@@ -139,28 +141,30 @@ public class GameListActivity extends Activity {
 				return null;
 			}
 		};
+		joinPostTask.execute(new String[] { game });
 	}
 
 	/**
 	 * Asynchronously create a game with the given name by POSTing to the server
 	 * @param game String name of the game to create
 	 */
-	private void createGame(final String game) {
-		AsyncTask<Void, Void, Void> joinPostTask = new AsyncTask<Void, Void, Void>() {
+	private void createGame(String game) {
+		AsyncTask<String, Void, Void> createPostTask = new AsyncTask<String, Void, Void>() {
 			@Override
-			protected Void doInBackground(Void... arg0) {
+			protected Void doInBackground(String... args) {
 				try {
 					// Do POST to tell server we're creating a game
 					HttpPost httpPost = new HttpPost(props.getProperty("host") + servletURI);
 					httpPost.addHeader("action", "create");
-					httpPost.addHeader("game", game);
+					httpPost.addHeader("game", args[0]);
 					Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 					new DefaultHttpClient().execute(httpPost);
 				} catch (Exception e) { Log.e("GameView", e.toString()); }
-				joinGame(game);
+				joinGame(args[0]);
 				return null;
 			}
 		};
+		createPostTask.execute(new String[] { game });
 	}
 
 	@Override
