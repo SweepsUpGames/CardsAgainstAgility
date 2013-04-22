@@ -32,11 +32,12 @@ import com.adaba.R;
 public class GameListActivity extends Activity {
 	static final String servletURI = "/GameServlet";
 	protected Properties props = new Properties();
+	private Time lastServerCall;
+	private ArrayList<String> games;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ArrayList<String> games = null;
 		setContentView(R.layout.activity_gamelist);
 		try {
 			// Load properties file
@@ -46,11 +47,14 @@ public class GameListActivity extends Activity {
 		}
 
 		if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
-			Time old = new Time(savedInstanceState.getString("GameListTime"));
+			Time old = new Time();
+			old.parse(savedInstanceState.getString("GameListTime"));
 			Time current = new Time();
+			Log.d("Time", "old "+old.format2445());
+			Log.d("Time", "current "+current.format2445());
 			current.setToNow();
-			if (Time.compare(old, current)>0){
-				Log.d("Here", "say hi");
+			if (Time.compare(old, current)<0){
+				Log.d("Time", "True");
 			}
 			games = savedInstanceState.getStringArrayList("GameList");
 		} else {
@@ -60,9 +64,7 @@ public class GameListActivity extends Activity {
 			}
 			Time recordedTime = new Time();
 			recordedTime.setToNow();
-			Log.d("Time", recordedTime.format2445());
-			savedInstanceState.putStringArrayList("GameList", games);
-			savedInstanceState.putString("GameListTime", recordedTime.format2445());
+			lastServerCall = recordedTime;
 		}
 
 		// Create ListView backed by games returned from GET to server
@@ -87,6 +89,16 @@ public class GameListActivity extends Activity {
 			}
 		});
 		Log.d("here","onCreate done");
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState){
+		if (games!= null){
+			savedInstanceState.putStringArrayList("GameList", games);
+		}
+		if (lastServerCall!= null){
+		savedInstanceState.putString("GameListTime", lastServerCall.format2445());
+		}
 	}
 
 	/**
