@@ -29,6 +29,8 @@
         </activity>
         <activity android:name=".activities.GameListActivity" >
         </activity>
+        <activity android:name=".activities.LobbyViewActivity" >
+        </activity>
     </application>
 
 </manifest>
