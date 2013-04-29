@@ -14,6 +14,7 @@ import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -129,7 +130,7 @@ public class GameListActivity extends Activity {
 	 * Asynchronously POST to the server to join a game
 	 * @param game String name of the game to join
 	 */
-	private void joinGame(String game) {
+	private void joinGame(final String game) {
 		// lol
 		AsyncTask<String, Void, Void> joinPostTask = new AsyncTask<String, Void, Void>() {
 			@Override
@@ -144,10 +145,17 @@ public class GameListActivity extends Activity {
 					Log.d("GameView", "Sending POST with string " + httpPost.getURI());
 					new DefaultHttpClient().execute(httpPost); 						
 				} catch (Exception e) { Log.e("GameView", e.toString()); }
+				joinGameLobby(game);
 				return null;
 			}
 		};
 		joinPostTask.execute(new String[] { game });
+	}
+	
+	private void joinGameLobby(String gameName){
+		Intent intent = new Intent(this, LobbyViewActivity.class);
+		//intent.putExtra("GameRoom", gameName );
+		startActivity(intent);
 	}
 
 	/**
