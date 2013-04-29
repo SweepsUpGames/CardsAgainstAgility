@@ -35,7 +35,7 @@ public class GameServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * SLF4J logger for this class
+	 * SLF4J logger for this classb 
 	 */
 	private final Logger logger = LoggerFactory.getLogger(GameServlet.class);
 
@@ -106,48 +106,32 @@ public class GameServlet extends HttpServlet {
 		}
 
 		String req = request.getHeader("req"); // What do we want to get?
+		String responseString = "";
 		if (req == null) {
+			responseString = "No request passed";
 		} else if (req.equalsIgnoreCase("roomlist")) {
-			// Retrieve list of games
-			logger.info("GET received for gameroom list.");		
-			for (String game : games.keySet()) {
-				response.getWriter().append(String.format("%s\n", game));
-				logger.debug("Data written to GET: {}", game);
-			}
+			responseString = getRoomlist();				
 		} else if (req.equalsIgnoreCase("players")) {
 			// Retrieve list of games
-			logger.info("GET received for player list for game {}.", request.getHeader("game"));
-			Game game = games.get(request.getHeader("game"));
-			for (Player player : game.getPlayers()) {
-				response.getWriter().append(String.format("%s", player.getName()));
-				if (player.isHost()) response.getWriter().append(String.format(", %s", "HOST"));
-				if (player.isTsar()) response.getWriter().append(String.format(", %s", "TSAR"));
-			}
+			String game = request.getHeader("game");
+			responseString = getPlayers(game);
 		} else if (req.equalsIgnoreCase("hand")) {
 			// Retrieve a player's hand
-			logger.info("GET received for hand with parameters game: {}, player: {}", request.getHeader("game"), request.getHeader("pid"));
-			Game game = games.get(request.getHeader("game"));
+			String game = request.getHeader("game");
 			String pid = request.getHeader("pid");
-			for (Card card : game.getPlayerHand(pid)) {
-				response.getWriter().append(String.format("%s\n", card.getText()));
-				logger.debug("Data written to GET: {}", card.getText());
-			}
+			responseString = getHand(game, pid);		
 		} else if (req.equalsIgnoreCase("tsarcard")) {
 			// Retrieve a certain game's current tsar card
-			logger.info("GET received for tsar card with parameters game: {}", request.getHeader("game"));
-			Game game = games.get(request.getHeader("game"));			
-			response.getWriter().append(String.format("%s\n", game.getCurrentTsarCard().getText()));
-			logger.debug("Data written to GET: {}", game.getCurrentTsarCard().getText());
+			String game = request.getHeader("game");
+			responseString = getTsarCard(game);
 		} else if (req.equalsIgnoreCase("selected")) {
 			// Retrieve the cards that have been played in the current turn of a certain game
-			logger.info("GET received for selected cards with parameters game: {}", request.getHeader("game"));
-			Game game = games.get(request.getHeader("game"));
-			for (Card card : game.getChoices().values()) {
-				response.getWriter().append(String.format("%s\n", card.getText()));
-				logger.debug("Data written to GET: {}", card.getText());
-			}
-		} 		
+			String game = request.getHeader("game");
+			responseString = getSelected(game);
+		}
+		response.getWriter().append(responseString);
 	}
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
@@ -207,5 +191,60 @@ public class GameServlet extends HttpServlet {
 				}
 			}
 		}
+	}
+	
+	protected String getRoomlist() {
+		// Retrieve list of games
+		logger.info("GET received for gameroom list.");
+		StringBuilder ret = new StringBuilder();
+		for (String game : games.keySet()) {
+			ret.append(String.format("%s\n", game));
+			logger.debug("Data written to GET: {}", game);
+		}
+		return ret.toString();
+	}
+
+	protected String getPlayers(String gameString) {
+		// Retrieve list of games
+		logger.info("GET received for player list for game {}.", gameString);
+		Game game = games.get(gameString);
+		StringBuilder ret = new StringBuilder();
+		for (Player player : game.getPlayers()) {
+			ret.append(String.format("%s", player.getName()));
+			if (player.isHost()) ret.append(String.format(", %s", "HOST"));
+			if (player.isTsar()) ret.append(String.format(", %s", "TSAR"));
+		}
+		return ret.toString();
+	}
+
+	protected String getHand(String gameString, String pid) {
+		logger.info("GET received for hand with parameters game: {}, player: {}", gameString, pid);
+		Game game = games.get(gameString);	
+		StringBuilder ret = new StringBuilder();
+		for (Card card : game.getPlayerHand(pid)) {
+			ret.append(String.format("%s\n", card.getText()));
+			logger.debug("Data written to GET: {}", card.getText());
+		}
+		return ret.toString();		
+	}
+
+	protected String getTsarCard(String gameString) {
+		// Retrieve list of games
+		logger.info("GET received for tsar card with parameters game: {}", gameString);
+		Game game = games.get(gameString);
+		StringBuilder ret = new StringBuilder();
+		ret.append(String.format("%s\n", game.getCurrentTsarCard().getText()));
+		return ret.toString();
+	}
+	
+	protected String getSelected(String gameString) {
+		logger.info("GET received for selected cards with parameters game: {}", gameString);
+		Game game = games.get(gameString);
+		StringBuilder ret = new StringBuilder();
+		for (Card card : game.getChoices().values()) {
+			ret.append(String.format("%s\n", card.getText()));
+			logger.debug("Data written to GET: {}", card.getText());
+		}
+		return ret.toString();
 	}
 }
