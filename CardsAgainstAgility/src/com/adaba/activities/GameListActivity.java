@@ -48,33 +48,13 @@ public class GameListActivity extends Activity {
 			Log.e("PlayerViewActivity", "Error reading host IP from properties", e);
 		}
 
-		if (savedInstanceState != null && savedInstanceState.getStringArrayList("GameList")!=null){
-			Time old = new Time();
-			old.parse(savedInstanceState.getString("GameListTime"));
-			Time current = new Time();
-			current.setToNow();
-			Log.d("Time", "old "+old.format2445());
-			Log.d("Time", "current "+current.format2445());
-			Log.d("Time", "diff "+Time.compare(old, current));
-
-			if (Time.compare(old, current)<-10){
-				Log.d("Time", "True");
-				lastServerCall = current;
-			} else {
-				lastServerCall = old;
-			}
-			games = savedInstanceState.getStringArrayList("GameList");
-		} else {
+		if (needUpdate(savedInstanceState,"GameList")){
 			games = getUpdatedGameList();
-			if (savedInstanceState == null){
-				savedInstanceState = new Bundle();
-			}
-			Time recordedTime = new Time();
-			recordedTime.setToNow();
-			lastServerCall = recordedTime;
+		} else {
+			games = savedInstanceState.getStringArrayList("GameList");
 		}
-
 		
+
 		// Create ListView backed by games returned from GET to server
 		final ListView gamesView = (ListView) findViewById(R.id.gameRoomList);
 		ArrayAdapter<String> adapt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, games);
@@ -98,7 +78,7 @@ public class GameListActivity extends Activity {
 		});
 		Log.d("here","onCreate done");
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState){
 		if (games!= null){
@@ -152,7 +132,7 @@ public class GameListActivity extends Activity {
 		};
 		joinPostTask.execute(new String[] { game });
 	}
-	
+
 	private void joinGameLobby(String gameName){
 		Intent intent = new Intent(this, LobbyViewActivity.class);
 		//intent.putExtra("GameRoom", gameName );
@@ -204,6 +184,28 @@ public class GameListActivity extends Activity {
 		UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
 		return deviceUuid.toString();
 	}
+
+
+	private boolean needUpdate(Bundle savedInstanceState, String itemToValidate){
+		Time current = new Time();
+		current.setToNow();
+		if (savedInstanceState != null && savedInstanceState.getStringArrayList(itemToValidate)!=null){
+			Time old = new Time();
+			old.parse(savedInstanceState.getString(itemToValidate+"Time"));
+			if (Time.compare(old, current)<-1){
+				lastServerCall = current;
+				return true;
+			} else {
+				lastServerCall = old;
+				return false;
+			}
+		} 
+		else {
+			lastServerCall = current;
+			return true;
+		}
+	}
+
 
 	/**
 	 * Asyncronous task used to get a list of games from the server 
