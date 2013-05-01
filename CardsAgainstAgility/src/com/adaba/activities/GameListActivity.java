@@ -53,7 +53,6 @@ public class GameListActivity extends Activity {
 		} else {
 			games = savedInstanceState.getStringArrayList("GameList");
 		}
-		
 
 		// Create ListView backed by games returned from GET to server
 		final ListView gamesView = (ListView) findViewById(R.id.gameRoomList);
@@ -78,7 +77,7 @@ public class GameListActivity extends Activity {
 		});
 		Log.d("here","onCreate done");
 	}
-
+	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState){
 		if (games!= null){
@@ -132,7 +131,7 @@ public class GameListActivity extends Activity {
 		};
 		joinPostTask.execute(new String[] { game });
 	}
-
+	
 	private void joinGameLobby(String gameName){
 		Intent intent = new Intent(this, LobbyViewActivity.class);
 		//intent.putExtra("GameRoom", gameName );
@@ -185,7 +184,6 @@ public class GameListActivity extends Activity {
 		return deviceUuid.toString();
 	}
 
-
 	private boolean needUpdate(Bundle savedInstanceState, String itemToValidate){
 		Time current = new Time();
 		current.setToNow();
@@ -205,7 +203,6 @@ public class GameListActivity extends Activity {
 			return true;
 		}
 	}
-
 
 	/**
 	 * Asyncronous task used to get a list of games from the server 
