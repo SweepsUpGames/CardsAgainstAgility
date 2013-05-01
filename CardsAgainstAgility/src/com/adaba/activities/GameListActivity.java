@@ -134,7 +134,7 @@ public class GameListActivity extends Activity {
 	
 	private void joinGameLobby(String gameName){
 		Intent intent = new Intent(this, LobbyViewActivity.class);
-		//intent.putExtra("GameRoom", gameName );
+		intent.putExtra("GameRoom", gameName );
 		startActivity(intent);
 	}
 

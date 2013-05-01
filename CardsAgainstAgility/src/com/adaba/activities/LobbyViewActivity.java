@@ -32,7 +32,7 @@ public class LobbyViewActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_lobby);
-		//gameRoom = savedInstanceState.getString("GameRoom");
+		gameRoom = getIntent().getExtras().getString("GameRoom");
 		players = getPlayersList();
 		
 		TextView gameRoom = (TextView) findViewById(R.id.gameRoom);
@@ -72,13 +72,14 @@ public class LobbyViewActivity extends Activity {
 	class GetPlayerList extends AsyncTask<Void, Void, ArrayList<String>> {
 		@Override
 		protected ArrayList<String> doInBackground(Void... arg0) {
-			ArrayList<String> games = new ArrayList<String>();
+			ArrayList<String> players = new ArrayList<String>();
 			try {
 				Log.d("LobbyView", "Populating onCreate()");
 				HttpClient httpclient = new DefaultHttpClient();
 				HttpGet httpGet = new HttpGet(props.getProperty("host")
 						+ servletURI);
 				httpGet.addHeader("req", "players");
+				httpGet.addHeader("game", gameRoom);
 				Log.d("LobbyView", "Connecting with string " + httpGet.getURI());
 				HttpResponse response = httpclient.execute(httpGet);
 				HttpEntity resEntityGet = response.getEntity();
@@ -87,12 +88,12 @@ public class LobbyViewActivity extends Activity {
 							.getEntity());
 					Log.d("Response", respString);
 					for (String str : respString.split("\n"))
-						games.add(str);
+						players.add(str);
 				}
 			} catch (Exception e) {
 				Log.e("LobbyView", e.toString());
 			}
-			return games;
+			return players;
 		}
 	};
 
