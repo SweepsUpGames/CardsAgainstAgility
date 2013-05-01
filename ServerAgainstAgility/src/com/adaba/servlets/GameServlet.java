@@ -132,67 +132,6 @@ public class GameServlet extends HttpServlet {
 		response.getWriter().append(responseString);
 	}
 
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/plain");
-
-		String action = request.getHeader("action"); // What do we want to get?
-		if (action == null) {
-		} else if (action.equalsIgnoreCase("join")) {
-			String game = request.getHeader("game"); // What do we want to get?
-			if (game != null) {
-				logger.info("POST received for joining game " + game);
-				if (games.get(game) != null) {
-					String pid = request.getHeader("pid");
-					String pname = request.getHeader("pname");
-					games.get(game).addPlayer(new Player(pid, pname));
-				}
-			}
-		} else if (action.equalsIgnoreCase("create")) {
-			String game = request.getHeader("game"); // What do we want to get?
-			if (game != null) {
-				logger.info("POST received for creating game " + game);
-
-				// Add some dummy data
-				Deck<WhiteCard> whiteDeck = null;
-				Deck<BlackCard> blackDeck = null;
-				try {
-					whiteDeck = DeckCreator.makeCoHDeck(Type.WHITE);
-					blackDeck = DeckCreator.makeCoHDeck(Type.BLACK);
-				} catch (IOException e) {
-					logger.error("Exception while reading card resource", e);
-				}
-				games.put(game, new Game(Collections.<Player>emptyList(), blackDeck, whiteDeck));
-			}
-		} else if (action.equalsIgnoreCase("start")) {
-			String game = request.getHeader("game"); // What do we want to get?
-			if (game != null) {
-				logger.info("POST received for starting game " + game);
-			}
-		} else if (action.equalsIgnoreCase("play")) {
-			String game = request.getHeader("game");
-			if (game != null) {
-				if (games.get(game) != null) {
-					String pid = request.getHeader("pid");
-					int card = Integer.parseInt(request.getHeader("card"));
-					logger.info("POST received for playing card {} from player {} in game {}", card, pid, game);
-					games.get(game).selectCard(pid, card);
-				}
-			}
-		} else if (action.equalsIgnoreCase("judge")) {
-			// TODO
-			String game = request.getHeader("game");
-			if (game != null) {
-				if (games.get(game) != null) {
-					logger.info("POST received for judging");
-				}
-			}
-		}
-	}
-	
 	protected String getRoomlist() {
 		// Retrieve list of games
 		logger.info("GET received for gameroom list.");
@@ -236,7 +175,7 @@ public class GameServlet extends HttpServlet {
 		ret.append(String.format("%s\n", game.getCurrentTsarCard().getText()));
 		return ret.toString();
 	}
-	
+
 	protected String getSelected(String gameString) {
 		logger.info("GET received for selected cards with parameters game: {}", gameString);
 		Game game = games.get(gameString);
@@ -246,5 +185,83 @@ public class GameServlet extends HttpServlet {
 			logger.debug("Data written to GET: {}", card.getText());
 		}
 		return ret.toString();
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/plain");
+
+		String action = request.getHeader("action"); // What do we want to get?
+		String responseString = "";
+		if (action == null) {
+		} else if (action.equalsIgnoreCase("join")) {
+			String game = request.getHeader("game");
+			String pname = request.getHeader("pname");
+			String pid = request.getHeader("pid");
+			responseString = postJoin(game, pname, pid);
+		} else if (action.equalsIgnoreCase("create")) {
+			String game = request.getHeader("game");			
+			responseString = postCreate(game);
+		} else if (action.equalsIgnoreCase("start")) {
+			String game = request.getHeader("game");			
+			responseString = postStart(game);
+		} else if (action.equalsIgnoreCase("play")) {
+			String game = request.getHeader("game");
+			String pid = request.getHeader("pid");
+			int card = Integer.parseInt(request.getHeader("card"));
+			responseString = postPlayCard(game, pid, card);
+		} else if (action.equalsIgnoreCase("judge")) {
+			String game = request.getHeader("game");
+			responseString = postJudge(game);
+		}
+		response.getWriter().append(responseString);
+	}
+
+	
+	protected String postJoin(String game, String pname, String pid) {
+		logger.info("POST received for joining game " + game);
+		if (games.get(game) != null) {					
+			games.get(game).addPlayer(new Player(pid, pname));
+		}
+		return "Success";
+	}
+
+	protected String postCreate(String game) {
+		logger.info("POST received for creating game " + game);
+
+		// Add some dummy data
+		Deck<WhiteCard> whiteDeck = null;
+		Deck<BlackCard> blackDeck = null;
+		try {
+			whiteDeck = DeckCreator.makeCoHDeck(Type.WHITE);
+			blackDeck = DeckCreator.makeCoHDeck(Type.BLACK);
+		} catch (IOException e) {
+			logger.error("Exception while reading card resource", e);
+			return "Failure";
+		}
+		games.put(game, new Game(Collections.<Player>emptyList(), blackDeck, whiteDeck));
+		return "Success";
+	}
+
+	protected String postStart(String game) {
+		logger.info("POST received for starting game " + game);
+		return "Not yet implemented.";
+	}
+
+	protected String postPlayCard(String game, String pid, int card) {
+		if (games.get(game) != null) {
+			logger.info("POST received for playing card {} from player {} in game {}", card, pid, game);
+			games.get(game).selectCard(pid, card);
+		}
+		return "Success";
+	}
+
+	protected String postJudge(String game) {
+		if (games.get(game) != null) {
+			logger.info("POST received for judging");
+		}
+		return "Not yet implemented";
 	}
 }
