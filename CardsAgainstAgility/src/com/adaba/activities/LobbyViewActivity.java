@@ -1,5 +1,6 @@
 package com.adaba.activities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -14,6 +15,7 @@ import com.adaba.R;
 import com.adaba.activities.GameListActivity.GetGameList;
 
 import android.app.Activity;
+import android.content.res.Resources.NotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +34,15 @@ public class LobbyViewActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_lobby);
+		try {
+			props.load(getResources().openRawResource(R.raw.system));
+		} catch (NotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		gameRoom = getIntent().getExtras().getString("GameRoom");
 		players = getPlayersList();
 		
@@ -47,9 +58,9 @@ public class LobbyViewActivity extends Activity {
 	}
 
 	/**
-	 * Asynchronously GET a list of games from the server
+	 * Asynchronously GET a list of players from the server
 	 * 
-	 * @return List<String> the updated list of games
+	 * @return List<String> the updated list of players
 	 */
 	private ArrayList<String> getPlayersList() {
 		AsyncTask<Void, Void, ArrayList<String>> playerlistGetTask = new GetPlayerList();
@@ -67,7 +78,7 @@ public class LobbyViewActivity extends Activity {
 	}
 
 	/**
-	 * Asyncronous task used to get a list of games from the server
+	 * Asyncronous task used to get a list of players from the server
 	 */
 	class GetPlayerList extends AsyncTask<Void, Void, ArrayList<String>> {
 		@Override
